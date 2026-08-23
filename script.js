@@ -16,6 +16,14 @@ const livros = [
     capa: "livro_capa_ser_forte_derose.png",
     stripeLink: "https://www.egregorabooks.com/livros/quando-e-preciso-ser-forte-44a-edicao"
   },
+    {
+    titulo: "Tratado de Yôga",
+    autor: "DeRose",
+    categoria: ["yoga","derose"],
+    preco: "-",
+    capa: "tratado_de_yoga.jpg",
+    stripeLink: "https://www.egregorabooks.com"
+  },
   {
     titulo: "Eu Me Lembro",
     autor: "DeRose",
