@@ -6,7 +6,7 @@ const livros = [
     categoria: ["yoga", "derose"],
     preco: "R$ 49,65",
     capa: "yoga_sutra.jpg",
-    stripeLink: "#"
+    stripeLink: "https://www.amazon.com.br/Y%C3%B4ga-S%C3%BAtra-P%C3%A1ta%C3%B1jali-DeRose/dp/8562617695/ref=sr_1_1?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=13W7702Z24WJ4&dib=eyJ2IjoiMSJ9.djCemAno1nclX81TBJhB24BwFaz7sQBiHI4VZBz7AKzYQeY-JHgTIHchc2t692PhxWGauA_j-DMsqEXmB_Nzdrrq-eKbFyZ3a9i97ohymoHzIxS7yPE84ajuVGQ0qSgnwJNC0-IetUGZAyPv0eNU-GVF5FR6MqvyUGLeIDxAoX6BCKqn-j_hU2h_IcCdPEhw1DfzfnvyyqzTNCvMgoY57aODl2Rb1AS9ryJssmG-NbO6ooel3WzNf4R0ZAfVYkfwy9Iwl3r3KSeVoXJyUqfvcpIKcyChH-yQCBTxddNoU5c.hOZ62M7WeYW1ObwNX2AytyvSZMp4w35QgmOil6zo_TI&dib_tag=se&keywords=derose&qid=1787514776&sprefix=deros%2Caps%2C223&sr=8-1"
   },
   {
     titulo: "Ser Forte",
