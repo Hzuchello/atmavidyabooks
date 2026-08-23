@@ -9,27 +9,11 @@ const livros = [
     stripeLink: "#"
   },
   {
-    titulo: "A Filosofia Perene",
-    autor: "Aldous Huxley",
-    categoria: "hindu",
-    preco: "R$ 79,90",
-    emoji: "🕉️",
-    stripeLink: "#"
-  },
-  {
     titulo: "Bhagavad Gītā",
     autor: "Tradução comentada",
     categoria: "sagrado",
     preco: "R$ 69,90",
     emoji: "📿",
-    stripeLink: "#"
-  },
-  {
-    titulo: "A Ciência Sagrada",
-    autor: "Sri Yukteswar Giri",
-    categoria: "hindu",
-    preco: "R$ 74,90",
-    emoji: "✨",
     stripeLink: "#"
   },
   {
@@ -54,14 +38,6 @@ const livros = [
     categoria: "desenvolvimento",
     preco: "R$ 59,90",
     emoji: "🌿",
-    stripeLink: "#"
-  },
-  {
-    titulo: "Autobiografia de um Iogue",
-    autor: "Paramahansa Yogananda",
-    categoria: "hindu",
-    preco: "R$ 89,90",
-    emoji: "🪷",
     stripeLink: "#"
   },
     {
