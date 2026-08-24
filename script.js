@@ -1,87 +1,8 @@
 // ── DADOS DOS LIVROS ──
-const livros = [
-  {
-    titulo: "Yôga Sútra de Pátañjali",
-    autor: "DeRose",
-    categoria: ["yoga", "derose"],
-    preco: "R$ 49,65",
-    capa: "yoga_sutra.jpg",
-    stripeLink: "https://www.amazon.com.br/Y%C3%B4ga-S%C3%BAtra-P%C3%A1ta%C3%B1jali-DeRose/dp/8562617695/ref=sr_1_1?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&crid=13W7702Z24WJ4&dib=eyJ2IjoiMSJ9.djCemAno1nclX81TBJhB24BwFaz7sQBiHI4VZBz7AKzYQeY-JHgTIHchc2t692PhxWGauA_j-DMsqEXmB_Nzdrrq-eKbFyZ3a9i97ohymoHzIxS7yPE84ajuVGQ0qSgnwJNC0-IetUGZAyPv0eNU-GVF5FR6MqvyUGLeIDxAoX6BCKqn-j_hU2h_IcCdPEhw1DfzfnvyyqzTNCvMgoY57aODl2Rb1AS9ryJssmG-NbO6ooel3WzNf4R0ZAfVYkfwy9Iwl3r3KSeVoXJyUqfvcpIKcyChH-yQCBTxddNoU5c.hOZ62M7WeYW1ObwNX2AytyvSZMp4w35QgmOil6zo_TI&dib_tag=se&keywords=derose&qid=1787514776&sprefix=deros%2Caps%2C223&sr=8-1"
-  },
-  {
-    titulo: "Ser Forte",
-    autor: "DeRose",
-    categoria: "derose",
-    preco: "-",
-    capa: "livro_capa_ser_forte_derose.png",
-    stripeLink: "https://www.egregorabooks.com/livros/quando-e-preciso-ser-forte-44a-edicao"
-  },
-    {
-    titulo: "Tratado de Yôga",
-    autor: "DeRose",
-    categoria: ["yoga","derose"],
-    preco: "-",
-    capa: "tratado_de_yoga.jpg",
-    stripeLink: "https://www.egregorabooks.com"
-  },
-  {
-    titulo: "Eu Me Lembro",
-    autor: "DeRose",
-    categoria: "derose",
-    preco: "-",
-    capa: "livro_capa_eu_me_lembro_derose.png",
-    stripeLink: "https://www.egregorabooks.com/livros/eu-me-lembro"
-  },
-  {
-    titulo: "Chakras, Kundaliní e Poderes paranormais",
-    autor: "DeRose",
-    categoria: "derose",
-    preco: "-",
-    capa: "livro_capa_chakras_derose.png",
-    stripeLink: "https://www.egregorabooks.com/livros/chakras-kundalini-e-poderes-paranormais-3a-edicao"
-  },
-  {
-    titulo: "Karma e Dharma",
-    autor: "DeRose",
-    categoria: "derose",
-    preco: "-",
-    capa: "livro_capa_karma_e_dharma_derose.png",
-    stripeLink: "https://www.egregorabooks.com/livros/karma-e-dharma-3a-edicao"
-  },
-  {
-    titulo: "The Bhagavad Gita",
-    autor: "Franklin Edgerton",
-    categoria: "sagrado",
-    preco: "R$ 531,00",
-    capa: "bhagavad_gita.jpg",
-    stripeLink: "#"
-  },
-  {
-    titulo: "O Poder do Hábito",
-    autor: "Charles Duhigg",
-    categoria: "desenvolvimento",
-    preco: "R$ 52,90",
-    capa: "o_poder_do_habito.jpg",
-    stripeLink: "#"
-  },
-  {
-    titulo: "Flow: A Psicologia do alto desempenho e da felicidade",
-    autor: "Mihaly Csikszentmihalyi",
-    categoria: "desenvolvimento",
-    preco: "R$ 51,49",
-    capa: "flow.jpg",
-    stripeLink: "#"
-  },
-
-  {
-    titulo: "The Divine Live Society",
-    autor: "Vários autores",
-    categoria: "hindu",
-    preco: "FREE",
-    capa: "shivananda.jpg",
-    stripeLink: "https://www.dlshq.org/"
-  },
-];
+// O catálogo agora vem do Supabase (tabela "livros"), não é mais
+// um array fixo aqui no código. A variável abaixo é preenchida
+// depois que a busca no banco terminar.
+let livros = [];
 
 const categoriaLabel = {
   hindu: "Filosofia Hindu",
@@ -98,22 +19,63 @@ function getCategoriaLabel(categoria) {
     .join(" · ");
 }
 
+// Converte o registro que vem do banco (em português, snake_case)
+// para o formato que o restante do código já usa.
+function mapLivroDoBanco(l) {
+  return {
+    id: l.id,
+    titulo: l.titulo,
+    autor: l.autor,
+    categoria: l.categorias,
+    capa: l.capa_url,
+    precoCentavos: l.preco_centavos, // null = "Em breve" | 0 = grátis | >0 = preço normal
+    tipoVenda: l.tipo_venda,         // "proprio" ou "externo"
+    linkExterno: l.link_externo
+  };
+}
+
+function formatarPreco(precoCentavos) {
+  if (precoCentavos === null || precoCentavos === undefined) return null; // sem preço ainda
+  if (precoCentavos === 0) return "Grátis";
+  return (precoCentavos / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+// Placeholder por enquanto — a lógica real de carrinho entra na próxima etapa.
+function adicionarAoCarrinho(livroId) {
+  console.log("Adicionar ao carrinho (ainda não implementado):", livroId);
+}
+
 function renderLivros(lista) {
   const grid = document.getElementById('livros-grid');
-  grid.innerHTML = lista.map(l => `
-    <div class="livro-card">
-      <div class="livro-capa">${l.capa ? `<img src="${l.capa}" alt="${l.titulo}" />` : (l.emoji || "")}</div>
-      <div class="livro-info">
-        <span class="livro-cat">${getCategoriaLabel(l.categoria)}</span>
-        <div class="livro-titulo">${l.titulo}</div>
-        <div class="livro-autor">${l.autor}</div>
-        <div class="livro-footer">
-          <span class="livro-preco">${l.preco}</span>
-          <a href="${l.stripeLink}" class="btn-comprar" target="_blank" rel="noopener">Comprar</a>
+  grid.innerHTML = lista.map(l => {
+    const precoFormatado = formatarPreco(l.precoCentavos);
+
+    let acaoHtml;
+    if (l.tipoVenda === 'externo') {
+      // Exceção: link de recurso externo (ex: Divine Life Society), não é venda própria
+      acaoHtml = `<a href="${l.linkExterno}" class="btn-comprar" target="_blank" rel="noopener">Acessar</a>`;
+    } else if (precoFormatado === null) {
+      // Ainda sem preço definido: nenhuma ação disponível
+      acaoHtml = `<span class="btn-comprar btn-em-breve">Em breve</span>`;
+    } else {
+      acaoHtml = `<button class="btn-comprar" onclick="adicionarAoCarrinho('${l.id}')">Adicionar ao carrinho</button>`;
+    }
+
+    return `
+      <div class="livro-card">
+        <div class="livro-capa">${l.capa ? `<img src="${l.capa}" alt="${l.titulo}" />` : (l.emoji || "")}</div>
+        <div class="livro-info">
+          <span class="livro-cat">${getCategoriaLabel(l.categoria)}</span>
+          <div class="livro-titulo">${l.titulo}</div>
+          <div class="livro-autor">${l.autor}</div>
+          <div class="livro-footer">
+            <span class="livro-preco">${precoFormatado ?? ""}</span>
+            ${acaoHtml}
+          </div>
         </div>
       </div>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 }
 
 function filtrar(cat, btn) {
@@ -128,5 +90,25 @@ function filtrar(cat, btn) {
   renderLivros(lista);
 }
 
-// Renderiza todos ao carregar
-renderLivros(livros);
+// Busca o catálogo no Supabase e renderiza assim que os dados chegarem.
+async function carregarLivros() {
+  const grid = document.getElementById('livros-grid');
+  grid.innerHTML = `<p class="livros-status">Carregando catálogo...</p>`;
+
+  const { data, error } = await supabaseClient
+    .from('livros')
+    .select('*')
+    .eq('disponivel', true)
+    .order('criado_em', { ascending: true });
+
+  if (error) {
+    console.error("Erro ao buscar livros no Supabase:", error);
+    grid.innerHTML = `<p class="livros-status">Não foi possível carregar o catálogo no momento.</p>`;
+    return;
+  }
+
+  livros = data.map(mapLivroDoBanco);
+  renderLivros(livros);
+}
+
+carregarLivros();
