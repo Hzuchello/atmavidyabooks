@@ -390,6 +390,25 @@ section {
   background: var(--acafrao-claro);
 }
 
+.btn-em-breve {
+  background: transparent;
+  border: 1px solid var(--acafrao);
+  color: var(--acafrao);
+  cursor: default;
+}
+
+.btn-em-breve:hover {
+  background: transparent;
+}
+
+.livros-status {
+  font-family: var(--font-ui);
+  color: var(--acafrao);
+  text-align: center;
+  padding: 40px 0;
+  grid-column: 1 / -1;
+}
+
 /* ── SOBRE ── */
 #sobre {
   background: var(--creme);
