@@ -20,7 +20,32 @@
       <li><a href="#sobre">Sobre</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
+    <div class="nav-auth" id="nav-auth">
+      <!-- preenchido pelo auth.js: botão "Entrar" ou usuário logado -->
+    </div>
   </nav>
+
+  <!-- MODAL DE LOGIN / CADASTRO -->
+  <div class="auth-modal" id="auth-modal">
+    <div class="auth-modal-conteudo">
+      <button class="auth-modal-fechar" onclick="fecharModalAuth()" aria-label="Fechar">&times;</button>
+      <h3 class="auth-modal-titulo" id="auth-titulo">Entrar</h3>
+      <form id="auth-form" data-modo="login" onsubmit="enviarFormAuth(event)">
+        <label class="auth-label" for="auth-email">E-mail</label>
+        <input type="email" id="auth-email" class="auth-input" required autocomplete="email" />
+
+        <label class="auth-label" for="auth-senha">Senha</label>
+        <input type="password" id="auth-senha" class="auth-input" required minlength="6" autocomplete="current-password" />
+
+        <p class="auth-erro" id="auth-erro"></p>
+
+        <button type="submit" class="btn-primary auth-submit" id="auth-submit">Entrar</button>
+      </form>
+      <p class="auth-alternar" id="auth-alternar-texto">
+        Ainda não tem conta? <a href="#" onclick="alternarModoAuth('cadastro'); return false;">Criar conta</a>
+      </p>
+    </div>
+  </div>
 
   <!-- HERO -->
   <section id="home">
@@ -99,6 +124,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
