@@ -1,7 +1,16 @@
 // ── AUTENTICAÇÃO (E-MAIL / SENHA) ──
 // Depende de supabaseClient, já criado em supabase-client.js
 
-function abrirModalAuth(modo = 'login') {
+// Guarda por que o modal foi aberto (ex: 'checkout'), para saber
+// o que fazer automaticamente depois de um login bem-sucedido.
+let contextoAuthAtual = null;
+
+function abrirModalAuth(modo = 'login', contexto = null) {
+  contextoAuthAtual = contexto;
+  const notaEl = document.getElementById('auth-contexto-nota');
+  notaEl.textContent = contexto === 'checkout'
+    ? 'Entre ou crie uma conta para finalizar sua compra.'
+    : '';
   document.getElementById('auth-modal').classList.add('aberto');
   alternarModoAuth(modo);
 }
@@ -70,6 +79,12 @@ async function enviarFormAuth(event) {
   }
 
   fecharModalAuth();
+
+  // Se o login foi pedido para finalizar uma compra, volta pro carrinho
+  if (contextoAuthAtual === 'checkout') {
+    abrirCarrinho();
+  }
+  contextoAuthAtual = null;
 }
 
 async function sair() {
