@@ -139,7 +139,17 @@ function fecharCarrinho() {
 }
 
 // A finalização real (pagamento) entra na etapa do Stripe.
-function finalizarCompra() {
+// Antes disso, garante que a pessoa está logada — o carrinho em si
+// continua livre para qualquer visitante, sem exigir login.
+async function finalizarCompra() {
+  const { data } = await supabaseClient.auth.getSession();
+
+  if (!data.session) {
+    fecharCarrinho();
+    abrirModalAuth('login', 'checkout');
+    return;
+  }
+
   alert('A finalização de compra ainda não está disponível — essa é a próxima etapa do projeto (Stripe).');
 }
 
