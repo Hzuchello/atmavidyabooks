@@ -1,15 +1,19 @@
 // ── CARRINHO DE COMPRAS ──
-// Fase inicial: guardado no localStorage do navegador, ainda sem
-// sincronizar com o Supabase. Cada item guarda uma cópia dos dados
-// do livro no momento em que foi adicionado (título, autor, capa,
-// preço), para o carrinho continuar correto mesmo que o catálogo
-// mude depois.
+// Guardado no localStorage do navegador, mas separado por identidade:
+// visitante não-logado usa uma chave "anônima", e cada conta logada
+// tem sua própria chave — assim contas diferentes no mesmo navegador
+// nunca compartilham o mesmo carrinho.
 
-const CARRINHO_STORAGE_KEY = 'atma_vidya_carrinho';
+let carrinho = [];
+let carrinhoIdentidadeAtual = 'anon'; // 'anon' ou o id do usuário logado
 
-function carregarCarrinhoSalvo() {
+function chaveStorageCarrinho() {
+  return `atma_vidya_carrinho_${carrinhoIdentidadeAtual}`;
+}
+
+function carregarCarrinhoDoStorage() {
   try {
-    const raw = localStorage.getItem(CARRINHO_STORAGE_KEY);
+    const raw = localStorage.getItem(chaveStorageCarrinho());
     return raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.error('Erro ao ler carrinho salvo:', e);
@@ -17,11 +21,37 @@ function carregarCarrinhoSalvo() {
   }
 }
 
-let carrinho = carregarCarrinhoSalvo();
-
 function salvarCarrinho() {
-  localStorage.setItem(CARRINHO_STORAGE_KEY, JSON.stringify(carrinho));
+  localStorage.setItem(chaveStorageCarrinho(), JSON.stringify(carrinho));
 }
+
+// Chamado sempre que o estado de login muda (login, logout, ou ao
+// carregar a página com uma sessão já existente).
+function sincronizarCarrinhoComSessao(session) {
+  const novaIdentidade = session ? `user_${session.user.id}` : 'anon';
+  if (novaIdentidade === carrinhoIdentidadeAtual) return; // nada mudou
+
+  // Se a pessoa tinha itens no carrinho ANTES de logar (carrinho anônimo),
+  // e a conta em que ela está entrando ainda não tem carrinho próprio salvo,
+  // esses itens passam a ser o carrinho dessa conta.
+  if (session && carrinhoIdentidadeAtual === 'anon' && carrinho.length > 0) {
+    const chaveDoUsuario = `atma_vidya_carrinho_user_${session.user.id}`;
+    const contaJaTinhaCarrinho = localStorage.getItem(chaveDoUsuario);
+    if (!contaJaTinhaCarrinho) {
+      localStorage.setItem(chaveDoUsuario, JSON.stringify(carrinho));
+      localStorage.removeItem(chaveStorageCarrinho());
+    }
+  }
+
+  carrinhoIdentidadeAtual = novaIdentidade;
+  carrinho = carregarCarrinhoDoStorage();
+  atualizarBadgeCarrinho();
+  renderizarCarrinho();
+}
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  sincronizarCarrinhoComSessao(session);
+});
 
 // Chamado pelo botão "Adicionar ao carrinho" nos cards do catálogo (script.js).
 // Busca os dados do livro no array `livros`, já carregado do Supabase.
@@ -153,5 +183,10 @@ async function finalizarCompra() {
   alert('A finalização de compra ainda não está disponível — essa é a próxima etapa do projeto (Stripe).');
 }
 
-// Estado inicial do ícone ao carregar a página (carrinho pode já ter itens salvos)
-atualizarBadgeCarrinho();
+// Estado inicial: descobre se já existe uma sessão (pessoa continuou logada
+// de uma visita anterior) antes de carregar o carrinho certo.
+supabaseClient.auth.getSession().then(({ data }) => {
+  carrinhoIdentidadeAtual = data.session ? `user_${data.session.user.id}` : 'anon';
+  carrinho = carregarCarrinhoDoStorage();
+  atualizarBadgeCarrinho();
+});
