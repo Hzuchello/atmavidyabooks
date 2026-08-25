@@ -512,6 +512,18 @@ section {
   margin-bottom: 20px;
 }
 
+.auth-contexto-nota {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--acafrao);
+  margin-top: -12px;
+  margin-bottom: 16px;
+}
+
+.auth-contexto-nota:empty {
+  display: none;
+}
+
 .auth-label {
   display: block;
   font-family: var(--font-ui);
