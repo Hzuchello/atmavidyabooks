@@ -40,11 +40,7 @@ function formatarPreco(precoCentavos) {
   return (precoCentavos / 100).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-// Placeholder por enquanto — a lógica real de carrinho entra na próxima etapa.
-function adicionarAoCarrinho(livroId) {
-  console.log("Adicionar ao carrinho (ainda não implementado):", livroId);
-}
-
+// A função adicionarAoCarrinho() está definida em cart.js
 function renderLivros(lista) {
   const grid = document.getElementById('livros-grid');
   grid.innerHTML = lista.map(l => {
