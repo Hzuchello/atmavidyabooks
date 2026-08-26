@@ -180,7 +180,36 @@ async function finalizarCompra() {
     return;
   }
 
-  alert('A finalização de compra ainda não está disponível — essa é a próxima etapa do projeto (Stripe).');
+  const botao = document.querySelector('.carrinho-finalizar');
+  const textoOriginal = botao.textContent;
+  botao.disabled = true;
+  botao.textContent = 'Preparando pagamento...';
+
+  try {
+    const resposta = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${data.session.access_token}`
+      },
+      body: JSON.stringify({
+        itens: carrinho.map(item => ({ livroId: item.id, quantidade: item.quantidade }))
+      })
+    });
+
+    const resultado = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(resultado.error || 'Não foi possível iniciar o pagamento.');
+    }
+
+    window.location.href = resultado.url; // leva para a página segura de pagamento do Stripe
+  } catch (err) {
+    console.error(err);
+    botao.disabled = false;
+    botao.textContent = textoOriginal;
+    alert(err.message);
+  }
 }
 
 // Estado inicial: descobre se já existe uma sessão (pessoa continuou logada
@@ -188,5 +217,17 @@ async function finalizarCompra() {
 supabaseClient.auth.getSession().then(({ data }) => {
   carrinhoIdentidadeAtual = data.session ? `user_${data.session.user.id}` : 'anon';
   carrinho = carregarCarrinhoDoStorage();
+
+  // Se a pessoa acabou de voltar do pagamento no Stripe, trata o resultado
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('compra') === 'sucesso') {
+    carrinho = [];
+    salvarCarrinho();
+    alert('Compra realizada com sucesso! Obrigado por comprar na Ātma Vidyā.');
+    window.history.replaceState({}, document.title, window.location.pathname);
+  } else if (params.get('compra') === 'cancelada') {
+    window.history.replaceState({}, document.title, window.location.pathname);
+  }
+
   atualizarBadgeCarrinho();
 });
