@@ -28,6 +28,7 @@ export default async function handler(req, res) {
 
     const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
     if (userError || !userData?.user) {
+      console.error('Falha ao validar usuário:', userError?.message || 'sem usuário retornado');
       return res.status(401).json({ error: 'Sessão inválida. Faça login novamente.' });
     }
     const usuario = userData.user;
@@ -123,4 +124,3 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Não foi possível iniciar o pagamento. Tente novamente.' });
   }
 }
-
