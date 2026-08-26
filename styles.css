@@ -324,8 +324,18 @@ section {
   display: block;
 }
 
-.livro-info {
-  padding: 22px 20px 24px;
+.livro-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.livro-info-topo {
+  padding: 22px 20px 0;
+}
+
+.livro-footer-wrap {
+  padding: 0 20px 24px;
 }
 
 .livro-cat {
@@ -797,6 +807,101 @@ section {
 .carrinho-finalizar {
   width: 100%;
   text-align: center;
+}
+
+/* ── PÁGINA DE DETALHE DO LIVRO ── */
+.livro-detalhe-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 140px 24px 100px;
+}
+
+.voltar-link {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--texto-muted);
+  text-decoration: none;
+  margin-bottom: 32px;
+  transition: color 0.2s;
+}
+
+.voltar-link:hover {
+  color: var(--acafrao);
+}
+
+.livro-detalhe {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 56px;
+  margin-bottom: 100px;
+}
+
+.livro-detalhe-capa {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #E0D9CB 0%, #D4CBB8 100%);
+}
+
+.livro-detalhe-capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.livro-detalhe-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  color: var(--indigo);
+  margin: 10px 0 6px;
+  line-height: 1.25;
+}
+
+.livro-detalhe-autor {
+  font-size: 1.1rem;
+  color: var(--texto-muted);
+  font-style: italic;
+  margin-bottom: 28px;
+}
+
+.livro-detalhe-sinopse {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--texto);
+  max-width: 620px;
+  margin-bottom: 36px;
+}
+
+.livro-detalhe-acao {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.livro-detalhe-acao .livro-preco {
+  font-size: 1.3rem;
+}
+
+.outros-livros-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--indigo);
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .livro-detalhe {
+    grid-template-columns: 1fr;
+  }
+
+  .livro-detalhe-capa {
+    max-width: 260px;
+    margin: 0 auto;
+  }
 }
 
 /* ── SOBRE ── */
