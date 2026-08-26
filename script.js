@@ -6,7 +6,7 @@ let livros = [];
 
 const categoriaLabel = {
   hindu: "Filosofia Hindu",
-  yoga: "Yôga e Meditação",
+  yoga: "Yôga",
   desenvolvimento: "Desenvolvimento Pessoal",
   sagrado: "Textos Sagrados",
   derose: "Método DeRose"
