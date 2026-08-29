@@ -175,6 +175,14 @@ function buscarLivro() {
   document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
 }
 
+function alternarFiltrosMobile() {
+  const wrap = document.querySelector('.filtros-cascade');
+  const btn = document.getElementById('filtros-toggle');
+  if (!wrap) return;
+  const aberto = wrap.classList.toggle('aberto');
+  if (btn) btn.setAttribute('aria-expanded', aberto ? 'true' : 'false');
+}
+
 function filtrar(cat, btn) {
   document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('ativo'));
   btn.classList.add('ativo');
@@ -185,6 +193,14 @@ function filtrar(cat, btn) {
         return cats.includes(cat);
       });
   renderLivros(lista);
+
+  const atual = document.getElementById('filtros-atual');
+  if (atual) atual.textContent = btn.textContent.trim();
+
+  const wrap = document.querySelector('.filtros-cascade');
+  if (wrap) wrap.classList.remove('aberto');
+  const toggle = document.getElementById('filtros-toggle');
+  if (toggle) toggle.setAttribute('aria-expanded', 'false');
 }
 
 // Busca o catálogo no Supabase e renderiza assim que os dados chegarem.
