@@ -282,14 +282,29 @@ nav {
 }
 
 @media (max-width: 860px) {
-  /* Layout mobile do banner: cartaz compacto (capa + título + botão) */
+  /* Mobile: só a capa institucional; slides de livro e dots ficam no desktop */
   .hero-carrossel {
-    height: 460px;
+    height: 420px;
   }
 
   .slide {
-    padding: 100px 20px 52px;
+    padding: 100px 20px 28px;
     justify-content: center;
+  }
+
+  .slide-capa {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 2;
+  }
+
+  .slide-livro {
+    display: none !important;
+  }
+
+  .carrossel-dots {
+    display: none;
   }
 
   .hero-om {
@@ -305,50 +320,6 @@ nav {
   .hero-sub {
     font-size: 1rem;
     margin-bottom: 0;
-  }
-
-  .slide-livro,
-  .slide-livro.slide-livro-direita {
-    flex-direction: column;
-    gap: 12px;
-    text-align: center;
-  }
-
-  .slide-livro-capa-col {
-    flex: 0 0 auto;
-  }
-
-  .slide-livro-capa-col img {
-    max-height: 140px;
-  }
-
-  .slide-livro-texto-col {
-    text-align: center;
-    max-width: 100%;
-  }
-
-  .slide-livro-eyebrow {
-    margin-bottom: 8px;
-    font-size: 11px;
-    letter-spacing: 2px;
-  }
-
-  .slide-livro-titulo {
-    font-size: 1.45rem;
-    margin-bottom: 4px;
-  }
-
-  .slide-livro-autor {
-    font-size: 1rem;
-  }
-
-  .slide-livro-sinopse {
-    display: none; /* sinopse fica na página do livro */
-  }
-
-  .slide-livro-btn {
-    margin-top: 12px;
-    padding: 8px 20px;
   }
 }
 
