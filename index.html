@@ -21,6 +21,10 @@
       <li><a href="#sobre">Sobre</a></li>
       <li><a href="#contato">Contato</a></li>
     </ul>
+    <div class="nav-busca">
+      <input type="text" id="busca-input" class="nav-busca-input" placeholder="Buscar produto..." onkeydown="if(event.key==='Enter'){buscarLivro();}" />
+      <button type="button" class="nav-busca-btn" onclick="buscarLivro()" aria-label="Buscar">🔍</button>
+    </div>
     <div class="nav-direita">
       <button type="button" class="nav-carrinho-btn" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
         🛍
@@ -74,29 +78,24 @@
     </div>
   </div>
 
-  <!-- HERO -->
-  <section id="home">
-    <div class="hero-bg"></div>
-    <img src="ashtanga_yantra.png" alt="Ashtanga Yantra" class="hero-om" />
-    <span class="hero-eyebrow">Sabedoria que transforma</span>
-   
-    <p class="hero-sub">Filosofia Hindu, Yôga e Desenvolvimento Pessoal — obras cuidadosamente selecionadas para o buscador sério.</p>
-    <div class="hero-actions">
-      <a href="#catalogo" class="btn-primary">Explorar Catálogo</a>
-      <a href="#sobre" class="btn-outline">Sobre a Livraria</a>
-    </div>
-  </section>
-
-  <!-- DESTAQUES -->
-  <section id="destaques">
-    <div class="section-inner">
-      <span class="section-eyebrow">Curadoria</span>
-      <h2 class="section-title">Livros em Destaque</h2>
-      <p class="section-sub">Uma seleção especial para começar sua jornada.</p>
-
-      <div class="livros-grid" id="destaques-grid">
-        <!-- gerado pelo JS -->
+  <!-- HERO / CARROSSEL DE DESTAQUES -->
+  <section id="home" class="hero-carrossel">
+    <div class="carrossel-slides" id="carrossel-slides">
+      <!-- Slide 1: capa institucional (fixo) -->
+      <div class="slide slide-capa ativo" data-slide="0">
+        <div class="hero-bg"></div>
+        <img src="ashtanga_yantra.png" alt="Ashtanga Yantra" class="hero-om" />
+        <span class="hero-eyebrow">Sabedoria que transforma</span>
+        <h1 class="hero-title">
+          
+        </h1>
+        <p class="hero-sub">Filosofia Hindu, Yôga e Desenvolvimento Pessoal — obras cuidadosamente selecionadas para o buscador sério.</p>
       </div>
+      <!-- Slides 2 a 5 (livros em destaque) inseridos via JS -->
+    </div>
+
+    <div class="carrossel-dots" id="carrossel-dots">
+      <button type="button" class="dot ativo" onclick="irParaSlide(0)" aria-label="Slide 1"></button>
     </div>
   </section>
 
