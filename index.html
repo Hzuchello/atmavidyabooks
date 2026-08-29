@@ -106,13 +106,19 @@
       <h2 class="section-title">Catálogo de Obras</h2>
       <p class="section-sub">Obras selecionadas nas tradições do Yoga, Vedānta, Sāṃkhya e Filosofia Perene.</p>
 
-      <div class="categorias">
-        <button class="cat-btn ativo" onclick="filtrar('todos', this)">Todos</button>
-        <button class="cat-btn" onclick="filtrar('derose', this)">Método DeRose</button>    
-        <button class="cat-btn" onclick="filtrar('hindu', this)">Filosofia Hindu</button>
-        <button class="cat-btn" onclick="filtrar('yoga', this)">Yôga</button>
-        <button class="cat-btn" onclick="filtrar('desenvolvimento', this)">Desenvolvimento Pessoal</button>
-        <button class="cat-btn" onclick="filtrar('sagrado', this)">Textos Sagrados</button>
+      <div class="filtros-cascade">
+        <button type="button" class="filtros-toggle" id="filtros-toggle" onclick="alternarFiltrosMobile()" aria-expanded="false">
+          <span class="filtros-toggle-label">Filtros</span>
+          <span class="filtros-toggle-atual" id="filtros-atual">Todos</span>
+        </button>
+        <div class="categorias" id="categorias">
+          <button class="cat-btn ativo" onclick="filtrar('todos', this)">Todos</button>
+          <button class="cat-btn" onclick="filtrar('derose', this)">Método DeRose</button>
+          <button class="cat-btn" onclick="filtrar('hindu', this)">Filosofia Hindu</button>
+          <button class="cat-btn" onclick="filtrar('yoga', this)">Yôga</button>
+          <button class="cat-btn" onclick="filtrar('desenvolvimento', this)">Desenvolvimento Pessoal</button>
+          <button class="cat-btn" onclick="filtrar('sagrado', this)">Textos Sagrados</button>
+        </div>
       </div>
 
       <div class="livros-grid" id="livros-grid">
