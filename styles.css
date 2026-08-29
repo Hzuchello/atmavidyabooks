@@ -282,6 +282,30 @@ nav {
 }
 
 @media (max-width: 860px) {
+  /* Banner: altura acompanha o conteúdo — evita corte no smartphone */
+  .hero-carrossel {
+    height: auto;
+    min-height: 0;
+    padding-bottom: 56px; /* espaço para as bolinhas */
+  }
+
+  .carrossel-slides {
+    position: relative;
+    inset: auto;
+  }
+
+  .slide {
+    position: relative;
+    inset: auto;
+    display: none;
+    opacity: 1;
+    padding: 108px 20px 28px;
+  }
+
+  .slide.ativo {
+    display: flex;
+  }
+
   .slide-livro,
   .slide-livro.slide-livro-direita {
     flex-direction: column;
