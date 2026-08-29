@@ -45,7 +45,7 @@ nav {
   align-items: center;
   justify-content: space-between;
   padding: 0 48px;
-  height: 76px;
+  height: 92px;
   background: rgba(232, 226, 214, 0.92);  /* alinhado ao novo creme */
   backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--borda);
@@ -94,17 +94,208 @@ nav {
   color: var(--acafrao);
 }
 
-/* ── HERO ── */
-#home {
-  min-height: 20vh;
+.nav-busca {
+  display: flex;
+  align-items: center;
+  background: var(--creme-card);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  padding: 6px 6px 6px 16px;
+  flex: 1;
+  max-width: 340px;
+  margin: 0 24px;
+}
+
+.nav-busca-input {
+  flex: 1;
+  border: none;
+  background: none;
+  outline: none;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--texto);
+}
+
+.nav-busca-input::placeholder {
+  color: var(--texto-muted);
+}
+
+.nav-busca-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 6px 8px;
+  color: var(--texto-muted);
+}
+
+.nav-busca-btn:hover {
+  color: var(--acafrao);
+}
+
+/* ── CARROSSEL (HERO + DESTAQUES) ── */
+.hero-carrossel {
+  position: relative;
+  overflow: hidden;
+  height: 500px;
+}
+
+.carrossel-slides {
+  position: absolute;
+  inset: 0;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 130px 24px 100px;
-  position: relative;
-  overflow: hidden;
+  padding: 79px 24px 36px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+}
+
+.slide.ativo {
+  opacity: 1;
+  pointer-events: auto;
+  z-index: 2;
+}
+
+.carrossel-dots {
+  position: absolute;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 3;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(27, 31, 59, 0.4);
+  background: rgba(240, 235, 224, 0.6);
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.dot.ativo {
+  background: var(--acafrao);
+  border-color: var(--acafrao);
+}
+
+.slide-livro {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 64px;
+  background: linear-gradient(135deg, var(--indigo) 0%, var(--indigo-soft) 100%);
+  color: #F0EBE0;
+}
+
+.slide-livro.slide-livro-direita {
+  flex-direction: row-reverse;
+}
+
+.slide-livro-capa-col {
+  flex: 0 0 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide-livro-capa-col img {
+  max-height: 228px;
+  max-width: 100%;
+  width: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  display: block;
+}
+
+.slide-livro-texto-col {
+  flex: 1;
+  max-width: 480px;
+  text-align: left;
+}
+
+.slide-livro-eyebrow {
+  display: inline-block;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--acafrao-claro);
+  margin-bottom: 16px;
+}
+
+.slide-livro-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 600;
+  color: #F0EBE0;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+
+.slide-livro-autor {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: rgba(240, 235, 224, 0.85);
+}
+
+.slide-livro-sinopse {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: rgba(240, 235, 224, 0.8);
+  margin-top: 18px;
+}
+
+.slide-livro-btn {
+  display: inline-block;
+  margin-top: 22px;
+  padding: 10px 26px;
+  border: 1px solid var(--acafrao-claro);
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #F0EBE0;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.slide-livro-btn:hover {
+  background: var(--acafrao-claro);
+  color: var(--indigo);
+}
+
+@media (max-width: 860px) {
+  .slide-livro,
+  .slide-livro.slide-livro-direita {
+    flex-direction: column;
+    gap: 24px;
+    text-align: center;
+  }
+
+  .slide-livro-capa-col img {
+    max-height: 220px;
+  }
+
+  .slide-livro-texto-col {
+    text-align: center;
+  }
 }
 
 .hero-bg {
@@ -114,9 +305,9 @@ nav {
 }
 
 .hero-om {
-  width: 140px;
+  width: 84px;
   height: auto;
-  margin-bottom: 36px;
+  margin-bottom: 22px;
   filter: drop-shadow(0 8px 24px rgba(27, 31, 59, 0.15));
   animation: floatOm 5s ease-in-out infinite;
 }
@@ -221,10 +412,6 @@ section {
 .section-inner {
   max-width: 1120px;
   margin: 0 auto;
-}
-
-#destaques {
-  padding-top: 20px;
 }
 
 .section-eyebrow {
