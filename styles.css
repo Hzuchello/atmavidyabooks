@@ -282,21 +282,68 @@ nav {
 }
 
 @media (max-width: 860px) {
-  /* Mobile: só a capa institucional; slides de livro e dots ficam no desktop */
+  /* Layout mobile novo: capa em fluxo (sem caixa recortada) */
+  nav {
+    height: 64px;
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .nav-logo {
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .nav-logo img {
+    height: 28px;
+  }
+
+  .nav-logo-text {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-busca {
+    flex: 1;
+    min-width: 0;
+    max-width: none;
+    margin: 0 6px;
+    padding: 4px 4px 4px 10px;
+  }
+
+  .nav-busca-input {
+    font-size: 13px;
+    min-width: 0;
+  }
+
   .hero-carrossel {
-    height: 420px;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    padding-top: 64px;
+  }
+
+  .carrossel-slides {
+    position: relative;
+    inset: auto;
   }
 
   .slide {
-    padding: 100px 20px 28px;
+    position: relative;
+    inset: auto;
+    display: none;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 28px 20px 36px;
     justify-content: center;
   }
 
   .slide-capa {
     display: flex !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    z-index: 2;
   }
 
   .slide-livro {
@@ -308,18 +355,19 @@ nav {
   }
 
   .hero-om {
-    width: 56px;
-    margin-bottom: 14px;
-  }
-
-  .hero-title {
-    font-size: 1.85rem;
+    width: 52px;
     margin-bottom: 12px;
   }
 
+  .hero-title {
+    font-size: 1.7rem;
+    margin-bottom: 10px;
+  }
+
   .hero-sub {
-    font-size: 1rem;
+    font-size: 1.05rem;
     margin-bottom: 0;
+    max-width: 34em;
   }
 }
 
@@ -360,6 +408,10 @@ nav {
   line-height: 1.15;
   margin-bottom: 22px;
   max-width: 720px;
+}
+
+.hero-title:empty {
+  display: none;
 }
 
 .hero-title em {
@@ -1260,34 +1312,57 @@ footer {
 
 /* ── RESPONSIVO ── */
 @media (max-width: 860px) {
+  section {
+    padding: 56px 18px;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+  }
+
+  .section-sub {
+    font-size: 1.05rem;
+    margin-bottom: 28px;
+  }
+
+  .categorias {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 28px;
+    padding-bottom: 4px;
+  }
+
+  .cat-btn {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 11px;
+  }
+
+  .livros-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
   .sobre-grid {
     grid-template-columns: 1fr;
-    gap: 48px;
+    gap: 36px;
     text-align: center;
   }
 
   .sobre-yantra img {
-    width: 220px;
+    width: 180px;
   }
 
   .sobre-quote {
     text-align: left;
-  }
-}
-
-@media (max-width: 768px) {
-  nav {
-    padding: 0 20px;
-  }
-
-  .nav-links {
-    display: none;
   }
 
   footer {
     flex-direction: column;
     gap: 16px;
     text-align: center;
+    padding: 28px 18px;
   }
 
   .hero-actions {
