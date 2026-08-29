@@ -32,6 +32,7 @@ function mapLivroDoBanco(l) {
     tipoVenda: l.tipo_venda,         // "proprio" ou "externo"
     linkExterno: l.link_externo,
     sinopse: l.sinopse,
+    sinopseBanner: l.sinopse_banner,
     destaque: l.destaque
   };
 }
@@ -86,14 +87,92 @@ function renderLivros(lista) {
   grid.innerHTML = lista.map(livroCardHtml).join('');
 }
 
-function renderDestaques(lista) {
-  const grid = document.getElementById('destaques-grid');
-  if (!grid) return; // só existe na página inicial
+// Monta os slides 2-5 do carrossel (um por livro em destaque), e os
+// pontos de navegação correspondentes. O slide 1 (capa institucional)
+// já existe fixo no HTML.
+function montarSlidesDestaque(lista) {
+  const container = document.getElementById('carrossel-slides');
+  const dotsContainer = document.getElementById('carrossel-dots');
+  if (!container || !dotsContainer) return; // só existe na página inicial
 
   const destaques = lista.filter(l => l.destaque).slice(0, 4);
-  grid.innerHTML = destaques.length
-    ? destaques.map(livroCardHtml).join('')
-    : `<p class="livros-status">Nenhum livro em destaque no momento.</p>`;
+
+  destaques.forEach((l, indice) => {
+    const lado = indice % 2 === 0 ? 'esquerda' : 'direita'; // 1º destaque: capa à esquerda; 2º: à direita; e assim por diante
+    const sinopseTexto = l.sinopseBanner ? l.sinopseBanner : 'Sinopse em breve.';
+
+    const slide = document.createElement('div');
+    slide.className = `slide slide-livro slide-livro-${lado}`;
+    slide.innerHTML = `
+      <div class="slide-livro-capa-col">
+        ${l.capa ? `<img src="${l.capa}" alt="${l.titulo}" />` : ""}
+      </div>
+      <div class="slide-livro-texto-col">
+        <span class="slide-livro-eyebrow">Destaque</span>
+        <h2 class="slide-livro-titulo">${l.titulo}</h2>
+        <p class="slide-livro-autor">${l.autor}</p>
+        <p class="slide-livro-sinopse">${sinopseTexto}</p>
+        <a href="livro.html?id=${l.id}" class="slide-livro-btn">Conferir</a>
+      </div>
+    `;
+    container.appendChild(slide);
+  });
+
+  // Recria os pontos de navegação, um por slide (institucional + destaques)
+  const totalSlides = container.querySelectorAll('.slide').length;
+  dotsContainer.innerHTML = '';
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot' + (i === 0 ? ' ativo' : '');
+    dot.setAttribute('aria-label', `Slide ${i + 1}`);
+    dot.onclick = () => irParaSlide(i);
+    dotsContainer.appendChild(dot);
+  }
+
+  reiniciarAutoplayCarrossel();
+}
+
+// ── CONTROLE DO CARROSSEL ──
+let carrosselIndiceAtual = 0;
+let carrosselTimer = null;
+
+function irParaSlide(indice) {
+  const slides = document.querySelectorAll('#carrossel-slides .slide');
+  const dots = document.querySelectorAll('#carrossel-dots .dot');
+  if (!slides.length) return;
+
+  carrosselIndiceAtual = (indice + slides.length) % slides.length;
+  slides.forEach((s, i) => s.classList.toggle('ativo', i === carrosselIndiceAtual));
+  dots.forEach((d, i) => d.classList.toggle('ativo', i === carrosselIndiceAtual));
+
+  reiniciarAutoplayCarrossel();
+}
+
+function proximoSlideCarrossel() {
+  irParaSlide(carrosselIndiceAtual + 1);
+}
+
+// Reinicia a contagem de 8s sempre que o slide muda (automático ou manual),
+// para não trocar de novo logo em seguida de um clique nas bolinhas.
+function reiniciarAutoplayCarrossel() {
+  if (carrosselTimer) clearInterval(carrosselTimer);
+  carrosselTimer = setInterval(proximoSlideCarrossel, 8000);
+}
+
+// ── BUSCA (navbar) ──
+function buscarLivro() {
+  const input = document.getElementById('busca-input');
+  const termo = (input?.value || '').trim().toLowerCase();
+
+  const resultado = termo
+    ? livros.filter(l =>
+        l.titulo.toLowerCase().includes(termo) || l.autor.toLowerCase().includes(termo)
+      )
+    : livros;
+
+  renderLivros(resultado);
+  document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
 }
 
 function filtrar(cat, btn) {
@@ -129,7 +208,7 @@ async function carregarLivros() {
 
   livros = data.map(mapLivroDoBanco);
   renderLivros(livros);
-  renderDestaques(livros);
+  montarSlidesDestaque(livros);
 }
 
 carregarLivros();
