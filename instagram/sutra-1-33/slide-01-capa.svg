@@ -1,0 +1,53 @@
+<svg width="1080" height="1080" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,500&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@400;500&display=swap');
+
+      .bg { fill: #F0EBE0; }
+      .moldura { fill: none; stroke: #C9782F; stroke-width: 1.5; }
+      .eyebrow { font-family: 'Outfit', sans-serif; font-size: 22px; letter-spacing: 4px; fill: #C9782F; font-weight: 500; }
+      .devanagari { font-family: 'Cormorant Garamond', serif; font-size: 34px; fill: #1B1F3B; }
+      .iast { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; fill: #6B6560; }
+      .traducao-longa { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; fill: #1B1F3B; }
+      .dica { font-family: 'Outfit', sans-serif; font-size: 18px; fill: #C9782F; letter-spacing: 2px; }
+      .marca-nome { font-family: 'Playfair Display', serif; font-size: 26px; fill: #1B1F3B; font-weight: 600; }
+      .marca-handle { font-family: 'Outfit', sans-serif; font-size: 18px; fill: #6B6560; letter-spacing: 1px; }
+      .pagina { font-family: 'Outfit', sans-serif; font-size: 16px; fill: #6B6560; letter-spacing: 1px; }
+      .linha { stroke: #D9D2C4; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1080" height="1080" />
+  <rect class="moldura" x="48" y="48" width="984" height="984" />
+
+  <text x="540" y="140" text-anchor="middle" class="eyebrow">YOGA SŪTRAS · I.33</text>
+
+  <text x="540" y="210" text-anchor="middle" class="devanagari">
+    <tspan x="540" dy="0">मैत्रीकरुणामुदितोपेक्षाणां</tspan>
+    <tspan x="540" dy="42">सुखदुःखपुण्यापुण्यविषयाणां</tspan>
+    <tspan x="540" dy="42">भावनातश्चित्तप्रसादनम् ॥ १.३३ ॥</tspan>
+  </text>
+
+  <text x="540" y="368" text-anchor="middle" class="iast">
+    <tspan x="540" dy="0">Maitrī-karuṇā-muditā-upekṣāṇāṁ</tspan>
+    <tspan x="540" dy="32">sukha-duḥkha-puṇya-apuṇya-viṣayāṇāṁ</tspan>
+    <tspan x="540" dy="32">bhāvanātaś-citta-prasādanam</tspan>
+  </text>
+
+  <line class="linha" x1="440" y1="490" x2="640" y2="490" />
+
+  <text x="540" y="550" text-anchor="middle" class="traducao-longa">
+    <tspan x="540" dy="0">"A serenidade da consciência é</tspan>
+    <tspan x="540" dy="40">obtida pelo cultivo de amizade</tspan>
+    <tspan x="540" dy="40">para com os felizes, compaixão</tspan>
+    <tspan x="540" dy="40">pelos que sofrem, alegria pelos</tspan>
+    <tspan x="540" dy="40">virtuosos e equanimidade</tspan>
+    <tspan x="540" dy="40">diante dos não virtuosos."</tspan>
+  </text>
+
+  <text x="540" y="860" text-anchor="middle" class="dica">DESLIZE PARA AS 4 ATITUDES →</text>
+
+  <text x="540" y="960" text-anchor="middle" class="marca-nome">Ātma Vidyā</text>
+  <text x="540" y="992" text-anchor="middle" class="marca-handle">@SEU_USUARIO_AQUI</text>
+  <text x="1000" y="1000" text-anchor="end" class="pagina">1/5</text>
+</svg>
