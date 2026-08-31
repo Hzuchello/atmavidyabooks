@@ -1,3 +1,24 @@
+// ── MOBILE: CATÁLOGO COMO PÁGINA PRINCIPAL ──
+// Em telas de até 860px, tanto abrir o site quanto clicar em
+// "Início" (logo ou menu) levam direto ao catálogo — o Hero/carrossel
+// deixa de ser um destino de navegação no mobile. No desktop, nada muda.
+(function configurarInicioMobile() {
+  const ehMobile = window.innerWidth <= 860;
+  if (!ehMobile) return;
+
+  // Carga inicial: se não veio nenhum destino específico na URL, já entra no catálogo
+  const temHashExplicito = window.location.hash && window.location.hash !== '#catalogo';
+  if (!temHashExplicito) {
+    window.location.hash = 'catalogo';
+  }
+
+  // Qualquer link que apontaria para o Hero ("#home" ou "index.html#home")
+  // passa a apontar para o catálogo também
+  document.querySelectorAll('a[href$="#home"]').forEach(link => {
+    link.setAttribute('href', link.getAttribute('href').replace(/#home$/, '#catalogo'));
+  });
+})();
+
 // ── DADOS DOS LIVROS ──
 // O catálogo vem do Supabase (tabela "livros"). A variável abaixo é
 // preenchida depois que a busca no banco terminar, e fica disponível
