@@ -9,6 +9,17 @@ import { createClient } from '@supabase/supabase-js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// Cliente com a chave "anon" — usado só para CONFIRMAR quem é o usuário
+// logado, a partir do token que o site envia. É a forma correta e
+// recomendada pelo próprio Supabase de validar sessão no servidor.
+const supabaseAuth = createClient(
+  process.env.SUPABASE_URL,
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im14c290emlzYmx1b3pzc3V0eXJ4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc1OTg4MDQsImV4cCI6MjEwMzE3NDgwNH0.JIek0bxCz8SUS_qeANVKq_uWa5JTKL0Ylt7t_OH4zbg'
+);
+
+// Cliente com a chave "service_role" — usado só para LER/ESCREVER no
+// banco (livros, pedidos, itens_pedido), contornando o RLS de forma
+// controlada. Nunca usado para validar login.
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -26,7 +37,7 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'É necessário estar logado para finalizar a compra.' });
     }
 
-    const { data: userData, error: userError } = await supabaseAdmin.auth.getUser(token);
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser(token);
     if (userError || !userData?.user) {
       console.error('Falha ao validar usuário:', userError?.message || 'sem usuário retornado');
       return res.status(401).json({ error: 'Sessão inválida. Faça login novamente.' });
