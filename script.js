@@ -289,18 +289,40 @@ function alternarNewsletter() {
   form.hidden = !form.hidden;
 }
 
-function enviarNewsletter(event) {
+async function enviarNewsletter(event) {
   event.preventDefault();
   const nome = document.getElementById('news-nome')?.value.trim();
   const email = document.getElementById('news-email')?.value.trim();
   const telefone = document.getElementById('news-telefone')?.value.trim();
   const status = document.getElementById('news-status');
+  const botao = event.target.querySelector('button[type="submit"]');
+
   if (!nome || !email || !telefone) return;
 
-  const lista = JSON.parse(localStorage.getItem('atma-newsletter') || '[]');
-  lista.push({ nome, email, telefone, em: new Date().toISOString() });
-  localStorage.setItem('atma-newsletter', JSON.stringify(lista));
+  if (botao) botao.disabled = true;
+  if (status) {
+    status.style.color = '';
+    status.textContent = 'Enviando...';
+  }
 
-  if (status) status.textContent = 'Recebemos seus dados. Em breve a lista entra no servidor.';
+  const { error } = await supabaseClient
+    .from('newsletter_inscricoes')
+    .insert({ nome, email, telefone });
+
+  if (botao) botao.disabled = false;
+
+  if (error) {
+    console.error('Erro ao salvar inscrição na newsletter:', error);
+    if (status) {
+      status.style.color = '#b3261e';
+      status.textContent = 'Não foi possível enviar agora. Tente novamente.';
+    }
+    return;
+  }
+
+  if (status) {
+    status.style.color = 'var(--acafrao)';
+    status.textContent = 'Inscrição confirmada! Obrigado.';
+  }
   event.target.reset();
 }
