@@ -283,6 +283,19 @@ async function carregarLivros() {
 
 carregarLivros();
 
+function mascararTelefone(input) {
+  const digitos = input.value.replace(/\D/g, '').slice(0, 11); // DDD + até 9 dígitos
+  let formatado = '';
+
+  if (digitos.length > 0) formatado = '(' + digitos.slice(0, 2);
+  if (digitos.length >= 2) formatado += ') ';
+  if (digitos.length > 2) formatado += digitos.slice(2, 5);
+  if (digitos.length > 5) formatado += ' ' + digitos.slice(5, 8);
+  if (digitos.length > 8) formatado += ' ' + digitos.slice(8, 11);
+
+  input.value = formatado;
+}
+
 function alternarNewsletter() {
   const form = document.getElementById('form-newsletter');
   if (!form) return;
