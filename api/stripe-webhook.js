@@ -53,10 +53,29 @@ export default async function handler(req, res) {
     const session = evento.data.object;
     const pedidoId = session.metadata?.pedido_id;
 
+    // O endereço pode vir em dois formatos diferentes, dependendo da
+    // versão da API do Stripe — checamos os dois por segurança.
+    const dadosEndereco =
+      session.collected_information?.shipping_details ||
+      session.shipping_details ||
+      null;
+
+    const enderecoEntrega = dadosEndereco?.address
+      ? {
+          nome: dadosEndereco.name || null,
+          linha1: dadosEndereco.address.line1 || null,
+          linha2: dadosEndereco.address.line2 || null,
+          cidade: dadosEndereco.address.city || null,
+          estado: dadosEndereco.address.state || null,
+          cep: dadosEndereco.address.postal_code || null,
+          pais: dadosEndereco.address.country || null
+        }
+      : null;
+
     if (pedidoId) {
       const { error } = await supabaseAdmin
         .from('pedidos')
-        .update({ status: 'pago' })
+        .update({ status: 'pago', endereco_entrega: enderecoEntrega })
         .eq('id', pedidoId);
 
       if (error) {
