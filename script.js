@@ -203,26 +203,8 @@ function buscarLivro() {
   document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── MENU MOBILE (hambúrguer) ──
-function alternarMenuMobile() {
-  const links = document.getElementById('nav-links');
-  const btn = document.getElementById('nav-menu-btn');
-  if (!links || !btn) return;
-
-  const abrir = !links.classList.contains('aberto');
-  links.classList.toggle('aberto', abrir);
-  btn.setAttribute('aria-expanded', abrir ? 'true' : 'false');
-}
-
-// Fecha o menu mobile automaticamente ao clicar em qualquer link dele
-document.addEventListener('click', event => {
-  if (event.target.closest('#nav-links a')) {
-    const links = document.getElementById('nav-links');
-    const btn = document.getElementById('nav-menu-btn');
-    links?.classList.remove('aberto');
-    btn?.setAttribute('aria-expanded', 'false');
-  }
-});
+// (alternarMenuMobile e o fechamento automático do menu ficam em auth.js,
+// que é carregado em todas as páginas — inclusive as que não usam este arquivo)
 
 // ── FILTROS (dropdown mobile) ──
 function alternarFiltrosMobile() {
