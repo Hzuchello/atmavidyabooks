@@ -111,6 +111,9 @@ export default async function handler(req, res) {
       mode: 'payment',
       payment_method_types: ['card'],
       customer_email: usuario.email,
+      shipping_address_collection: {
+        allowed_countries: ['BR']
+      },
       line_items: itensValidos.map(({ livro, quantidade }) => ({
         quantity: quantidade,
         price_data: {
