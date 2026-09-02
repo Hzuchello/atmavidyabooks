@@ -1856,3 +1856,86 @@ footer {
     gap: 10px;
   }
 }
+
+/* ── PÁGINA DE PRIVACIDADE ── */
+.privacidade-container {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 140px 24px 100px;
+}
+
+.privacidade-titulo {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  color: var(--indigo);
+  margin-bottom: 8px;
+}
+
+.privacidade-atualizado {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--texto-muted);
+  margin-bottom: 32px;
+}
+
+.privacidade-intro {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--texto);
+  margin-bottom: 40px;
+}
+
+.privacidade-secao {
+  margin-bottom: 32px;
+}
+
+.privacidade-secao h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--indigo);
+  margin-bottom: 12px;
+}
+
+.privacidade-secao p {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--texto);
+  margin-bottom: 10px;
+}
+
+.privacidade-secao ul {
+  padding-left: 22px;
+  margin-bottom: 12px;
+}
+
+.privacidade-secao li {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--texto);
+  margin-bottom: 6px;
+}
+
+.privacidade-secao a {
+  color: var(--acafrao);
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.footer-links a {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  color: var(--texto-muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--acafrao);
+}
