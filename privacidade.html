@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Política de Privacidade — Ātma Vidyā</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="img/marca/ashtanga_yantra.png" />
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="index.html#home" class="nav-logo">
+      <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" />
+      <span class="nav-logo-text">Livraria<br>Ātma Vidyā</span>
+    </a>
+    <button type="button" class="nav-menu-btn" id="nav-menu-btn" onclick="alternarMenuMobile()" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <div class="nav-centro">
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#home">Início</a></li>
+        <li><a href="index.html#catalogo">Catálogo</a></li>
+        <li><a href="index.html#sobre">Sobre</a></li>
+        <li><a href="index.html#contato">Contato</a></li>
+      </ul>
+    </div>
+    <div class="nav-direita">
+      <button type="button" class="nav-carrinho-btn" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
+        🛍
+        <span class="nav-carrinho-badge" id="carrinho-badge"></span>
+      </button>
+      <div class="nav-auth" id="nav-auth">
+        <!-- preenchido pelo auth.js -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- CARRINHO DE COMPRAS -->
+  <div class="carrinho-overlay" id="carrinho-overlay" onclick="fecharCarrinho()"></div>
+  <aside class="carrinho-drawer" id="carrinho-drawer">
+    <div class="carrinho-cabecalho">
+      <h3>Seu Carrinho</h3>
+      <button type="button" class="carrinho-fechar" onclick="fecharCarrinho()" aria-label="Fechar carrinho">&times;</button>
+    </div>
+    <div class="carrinho-itens" id="carrinho-itens">
+      <p class="carrinho-vazio">Seu carrinho está vazio.</p>
+    </div>
+    <div class="carrinho-rodape" id="carrinho-rodape" style="display:none;">
+      <div class="carrinho-total-linha">
+        <span>Total</span>
+        <span id="carrinho-total">R$ 0,00</span>
+      </div>
+      <button type="button" class="btn-primary carrinho-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+    </div>
+  </aside>
+
+  <!-- MODAL DE LOGIN / CADASTRO -->
+  <div class="auth-modal" id="auth-modal">
+    <div class="auth-modal-conteudo">
+      <button class="auth-modal-fechar" onclick="fecharModalAuth()" aria-label="Fechar">&times;</button>
+      <h3 class="auth-modal-titulo" id="auth-titulo">Entrar</h3>
+      <p class="auth-contexto-nota" id="auth-contexto-nota"></p>
+      <form id="auth-form" data-modo="login" onsubmit="enviarFormAuth(event)">
+        <label class="auth-label" for="auth-email">E-mail</label>
+        <input type="email" id="auth-email" class="auth-input" required autocomplete="email" />
+
+        <label class="auth-label" for="auth-senha">Senha</label>
+        <input type="password" id="auth-senha" class="auth-input" required minlength="6" autocomplete="current-password" />
+
+        <p class="auth-erro" id="auth-erro"></p>
+
+        <button type="submit" class="btn-primary auth-submit" id="auth-submit">Entrar</button>
+      </form>
+      <p class="auth-alternar" id="auth-alternar-texto">
+        Ainda não tem conta? <a href="#" onclick="alternarModoAuth('cadastro'); return false;">Criar conta</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- POLÍTICA DE PRIVACIDADE -->
+  <main class="privacidade-container">
+    <h1 class="privacidade-titulo">Política de Privacidade</h1>
+    <p class="privacidade-atualizado">Última atualização: setembro de 2026</p>
+
+    <p class="privacidade-intro">
+      Esta página explica, de forma simples e direta, quais dados a Livraria Ātma Vidyā
+      coleta, para que eles são usados, onde ficam guardados, e quais direitos você tem
+      sobre eles — em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+    </p>
+
+    <section class="privacidade-secao">
+      <h2>Quais dados coletamos</h2>
+      <ul>
+        <li>Nome, e-mail e senha, quando você cria uma conta no site</li>
+        <li>Endereço de entrega, quando você finaliza uma compra</li>
+        <li>Nome, e-mail e telefone (WhatsApp), quando você se inscreve na nossa newsletter</li>
+        <li>Histórico de pedidos e itens comprados</li>
+      </ul>
+      <p>
+        Não coletamos nem armazenamos dados do seu cartão de crédito — isso é feito
+        inteiramente pelo Stripe, nosso processador de pagamentos, seguindo os mais
+        altos padrões de segurança do mercado (PCI-DSS).
+      </p>
+    </section>
+
+    <section class="privacidade-secao">
+      <h2>Para que usamos seus dados</h2>
+      <ul>
+        <li>Processar e entregar seus pedidos</li>
+        <li>Permitir que você acompanhe o status das suas compras</li>
+        <li>Enviar novidades sobre o catálogo, caso você se inscreva na newsletter</li>
+        <li>Responder dúvidas enviadas pelo formulário de contato</li>
+      </ul>
+    </section>
+
+    <section class="privacidade-secao">
+      <h2>Onde seus dados ficam guardados</h2>
+      <p>
+        Seus dados são armazenados de forma segura no Supabase (banco de dados) e,
+        no caso de pagamentos, no Stripe. Ambos são fornecedores internacionais com
+        práticas reconhecidas de segurança da informação.
+      </p>
+    </section>
+
+    <section class="privacidade-secao">
+      <h2>Seus direitos</h2>
+      <p>
+        A qualquer momento, você pode solicitar acesso, correção ou exclusão dos
+        seus dados pessoais. Para isso, entre em contato pelo e-mail abaixo.
+      </p>
+    </section>
+
+    <section class="privacidade-secao">
+      <h2>Contato</h2>
+      <p>
+        Dúvidas sobre esta política ou sobre seus dados podem ser enviadas para
+        <a href="mailto:contato@atmavidya.com.br">contato@atmavidya.com.br</a>.
+      </p>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-text">© 2026 Livraria Ātma Vidyā — Curitiba, Brasil</span>
+    <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" class="footer-om" />
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth.js"></script>
+  <script src="cart.js"></script>
+</body>
+</html>
