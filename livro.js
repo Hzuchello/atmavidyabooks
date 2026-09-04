@@ -1,111 +1,92 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Livro — Ātma Vidyā</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <link rel="icon" type="image/png" href="img/marca/ashtanga_yantra.png" />
-</head>
-<body>
-  <!-- NAV -->
-  <nav>
-    <a href="index.html#home" class="nav-logo">
-      <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" />
-      <span class="nav-logo-text">Livraria<br>Ātma Vidyā</span>
-    </a>
-    <button type="button" class="nav-menu-btn" id="nav-menu-btn" onclick="alternarMenuMobile()" aria-label="Abrir menu" aria-expanded="false">☰</button>
-    <div class="nav-centro">
-      <ul class="nav-links" id="nav-links">
-        <li><a href="index.html#home">Início</a></li>
-        <li><a href="index.html#catalogo">Catálogo</a></li>
-        <li><a href="samkhya.html">Sāṃkhya</a></li>
-        <li><a href="index.html#sobre">Sobre</a></li>
-        <li><a href="index.html#contato">Contato</a></li>
-      </ul>
-    </div>
-    <div class="nav-direita">
-      <button type="button" class="nav-carrinho-btn" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
-        🛍
-        <span class="nav-carrinho-badge" id="carrinho-badge"></span>
-      </button>
-      <div class="nav-auth" id="nav-auth">
-        <!-- preenchido pelo auth.js: botão "Entrar" ou usuário logado -->
+// ── PÁGINA DE DETALHE DO LIVRO ──
+function getLivroIdDaUrl() {
+  return new URLSearchParams(window.location.search).get('id');
+}
+
+function acaoHtmlDetalhe(l) {
+  const precoFormatado = formatarPreco(l.precoCentavos);
+  if (l.tipoVenda === 'externo') {
+    return `<a href="${l.linkExterno}" class="btn-comprar" target="_blank" rel="noopener">Acessar</a>`;
+  }
+  if (precoFormatado === null) {
+    return `<span class="btn-comprar btn-em-breve">Em breve</span>`;
+  }
+  return `<button class="btn-comprar" onclick="adicionarAoCarrinho('${l.id}')">Adicionar ao carrinho</button>`;
+}
+
+async function carregarDetalheLivro() {
+  const container = document.getElementById('livro-detalhe');
+  if (!container) return;
+
+  const id = getLivroIdDaUrl();
+  if (!id) {
+    container.innerHTML = `<p class="livros-status">Livro não encontrado.</p>`;
+    return;
+  }
+
+  try {
+    const { data, error } = await supabaseClient
+      .from('livros')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) {
+      console.error('Erro ao buscar o livro:', error);
+      container.innerHTML = `<p class="livros-status">Não foi possível carregar este livro.</p>`;
+      return;
+    }
+
+    if (!data) {
+      container.innerHTML = `<p class="livros-status">Livro não encontrado.</p>`;
+      return;
+    }
+
+    const l = mapLivroDoBanco(data);
+    document.title = `${l.titulo} — Ātma Vidyā`;
+
+    const precoFormatado = formatarPreco(l.precoCentavos);
+
+    container.innerHTML = `
+      <div class="livro-detalhe-capa">
+        ${l.capa ? `<img src="${l.capa}" alt="${l.titulo}" />` : ''}
       </div>
-    </div>
-  </nav>
-
-  <!-- CARRINHO DE COMPRAS -->
-  <div class="carrinho-overlay" id="carrinho-overlay" onclick="fecharCarrinho()"></div>
-  <aside class="carrinho-drawer" id="carrinho-drawer">
-    <div class="carrinho-cabecalho">
-      <h3>Seu Carrinho</h3>
-      <button type="button" class="carrinho-fechar" onclick="fecharCarrinho()" aria-label="Fechar carrinho">&times;</button>
-    </div>
-    <div class="carrinho-itens" id="carrinho-itens">
-      <p class="carrinho-vazio">Seu carrinho está vazio.</p>
-    </div>
-    <div class="carrinho-rodape" id="carrinho-rodape" style="display:none;">
-      <div class="carrinho-total-linha">
-        <span>Total</span>
-        <span id="carrinho-total">R$ 0,00</span>
+      <div class="livro-detalhe-info">
+        <span class="livro-cat">${getCategoriaLabel(l.categoria)}</span>
+        <h1 class="livro-detalhe-titulo">${l.titulo}</h1>
+        <p class="livro-detalhe-autor">${l.autor}</p>
+        <p class="livro-detalhe-sinopse">${l.sinopse ? l.sinopse : 'Sinopse em breve.'}</p>
+        <div class="livro-detalhe-acao">
+          <span class="livro-preco">${precoFormatado ?? ''}</span>
+          ${acaoHtmlDetalhe(l)}
+        </div>
       </div>
-      <button type="button" class="btn-primary carrinho-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
-    </div>
-  </aside>
+    `;
 
-  <!-- MODAL DE LOGIN / CADASTRO -->
-  <div class="auth-modal" id="auth-modal">
-    <div class="auth-modal-conteudo">
-      <button class="auth-modal-fechar" onclick="fecharModalAuth()" aria-label="Fechar">&times;</button>
-      <h3 class="auth-modal-titulo" id="auth-titulo">Entrar</h3>
-      <p class="auth-contexto-nota" id="auth-contexto-nota"></p>
-      <form id="auth-form" data-modo="login" onsubmit="enviarFormAuth(event)">
-        <label class="auth-label" for="auth-email">E-mail</label>
-        <input type="email" id="auth-email" class="auth-input" required autocomplete="email" />
+    renderOutrosLivros(id);
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<p class="livros-status">Não foi possível carregar este livro.</p>`;
+  }
+}
 
-        <label class="auth-label" for="auth-senha">Senha</label>
-        <input type="password" id="auth-senha" class="auth-input" required minlength="6" autocomplete="current-password" />
+async function renderOutrosLivros(idAtual) {
+  const grid = document.getElementById('outros-livros-grid');
+  if (!grid) return;
 
-        <p class="auth-erro" id="auth-erro"></p>
+  const { data, error } = await supabaseClient
+    .from('livros')
+    .select('*')
+    .neq('id', idAtual)
+    .eq('disponivel', true)
+    .limit(4);
 
-        <button type="submit" class="btn-primary auth-submit" id="auth-submit">Entrar</button>
-      </form>
-      <p class="auth-alternar" id="auth-alternar-texto">
-        Ainda não tem conta? <a href="#" onclick="alternarModoAuth('cadastro'); return false;">Criar conta</a>
-      </p>
-    </div>
-  </div>
+  if (error || !data) return;
+  grid.innerHTML = data.map(mapLivroDoBanco).map(livroCardHtml).join('');
+}
 
-  <!-- DETALHE DO LIVRO -->
-  <main class="livro-detalhe-container">
-    <a href="index.html#catalogo" class="voltar-link">← Voltar ao catálogo</a>
-
-    <div id="livro-detalhe" class="livro-detalhe">
-      <p class="livros-status">Carregando...</p>
-    </div>
-
-    <section class="outros-livros-section">
-      <h3>Outros livros</h3>
-      <div class="livros-grid" id="outros-livros-grid"></div>
-    </section>
-  </main>
-
-  <!-- FOOTER -->
-  <footer>
-    <span class="footer-text">© 2026 Livraria Ātma Vidyā — Curitiba, Brasil</span>
-    <div class="footer-links">
-      <a href="privacidade.html">Política de Privacidade</a>
-    </div>
-    <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" class="footer-om" />
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-client.js"></script>
-  <script src="auth.js"></script>
-  <script src="cart.js"></script>
-  <script src="script.js"></script>
-  <script src="livro.js"></script>
-</body>
-</html>
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', carregarDetalheLivro);
+} else {
+  carregarDetalheLivro();
+}
