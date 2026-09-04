@@ -28,15 +28,14 @@ let livros = [];
 const categoriaLabel = {
   hindu: "Filosofia Hindu",
   yoga: "Yôga",
-  desenvolvimento: "Desenvolvimento Pessoal",
-  sagrado: "Textos Sagrados",
+  desenvolvimento: "Psicologia",
+  sagrado: "Filosofia Hindu",
   derose: "Método DeRose"
 };
 
 function getCategoriaLabel(categoria) {
   const cats = Array.isArray(categoria) ? categoria : [categoria];
-  return cats
-    .map(c => categoriaLabel[c] || c)
+  return [...new Set(cats.map(c => categoriaLabel[c] || c).filter(Boolean))]
     .join(" · ");
 }
 
