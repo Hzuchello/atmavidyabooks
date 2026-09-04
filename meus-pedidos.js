@@ -1,140 +1,104 @@
-// ── PÁGINA "MEUS PEDIDOS" ──
-// Depende de: supabaseClient (supabase-client.js), abrirModalAuth (auth.js)
-
-const statusPedidoInfo = {
-  pendente: { texto: 'Aguardando pagamento', classe: 'pedido-status-pendente' },
-  pago: { texto: 'Pagamento confirmado', classe: 'pedido-status-pago' },
-  cancelado: { texto: 'Cancelado', classe: 'pedido-status-cancelado' }
-};
-
-function formatarDataPedido(isoString) {
-  return new Date(isoString).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric'
-  });
-}
-
-function formatarPrecoPedido(centavos) {
-  return (centavos / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function linhasEndereco(pedido) {
-  let e = pedido.endereco_entrega || pedido.endereco || pedido.entrega || pedido.shipping || null;
-  if (!e) return [];
-  if (typeof e === 'string') {
-    try { e = JSON.parse(e); } catch { return [e]; }
-  }
-
-  const nome = e.destinatario || e.nome || e.name || e.shipping_name || '';
-  const rua = e.rua || e.logradouro || '';
-  const numero = e.numero || e.number || '';
-  const complemento = e.complemento || e.complement || '';
-  const bairro = e.bairro || e.neighborhood || '';
-  const linha1 = e.linha1 || e.endereco || e.address_line1 || e.line1
-    || [rua, numero].filter(Boolean).join(', ');
-  const linha2 = e.linha2 || e.address_line2 || e.line2
-    || [complemento, bairro].filter(Boolean).join(' — ');
-  const cidade = e.cidade || e.city || '';
-  const uf = e.uf || e.estado || e.state || '';
-  const cep = e.cep || e.postal_code || e.postalCode || '';
-  const cidadeUf = [cidade, uf].filter(Boolean).join(' - ');
-  const cepFmt = cep ? (cidadeUf ? `${cidadeUf}, ${cep}` : cep) : cidadeUf;
-  return [nome, linha1, linha2, cepFmt].map(x => String(x || '').trim()).filter(Boolean);
-}
-
-function pedidoCardHtml(pedido, itensDoPedido) {
-  const statusInfo = statusPedidoInfo[pedido.status] || { texto: pedido.status, classe: '' };
-  const codigo = pedido.id.slice(0, 8).toUpperCase();
-  const data = formatarDataPedido(pedido.criado_em);
-  const destino = linhasEndereco(pedido);
-
-  const enderecoHtml = destino.length
-    ? destino.map(l => `<div>${l}</div>`).join('')
-    : `<div class="pedido-endereco-vazio">Endereço de entrega ainda não registrado neste pedido.</div>`;
-
-  const itensHtml = itensDoPedido.length
-    ? itensDoPedido.map(item => `
-        <div class="pedido-item">
-          <div class="pedido-item-capa">${item.livros?.capa_url ? `<img src="${item.livros.capa_url}" alt="${item.livros.titulo}" />` : ''}</div>
-          <div class="pedido-item-info">
-            <div class="pedido-item-titulo">${item.livros?.titulo || 'Livro'}</div>
-            <div class="pedido-item-autor">${item.livros?.autor || ''}</div>
-            <div class="pedido-item-qtd">Quantidade: ${item.quantidade}</div>
-          </div>
-          <div class="pedido-item-preco">${formatarPrecoPedido(item.preco_unitario_centavos * item.quantidade)}</div>
-        </div>
-      `).join('')
-    : `<p class="livros-status">Itens não encontrados.</p>`;
-
-  return `
-    <div class="pedido-card">
-      <div class="pedido-cabecalho">
-        <div class="pedido-numero">Pedido #${codigo} — ${data}</div>
-        <span class="pedido-status ${statusInfo.classe}">${statusInfo.texto}</span>
-      </div>
-      <div class="pedido-bloco pedido-entrega">
-        <div class="pedido-entrega-rotulo">Entregar para</div>
-        <div class="pedido-entrega-texto">${enderecoHtml}</div>
-      </div>
-      <div class="pedido-itens">${itensHtml}</div>
-      <div class="pedido-rodape">
-        <span>Total</span>
-        <span>${formatarPrecoPedido(pedido.total_centavos)}</span>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meus Pedidos — Ātma Vidyā</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" type="image/png" href="img/marca/ashtanga_yantra.png" />
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <a href="index.html#home" class="nav-logo">
+      <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" />
+      <span class="nav-logo-text">Livraria<br>Ātma Vidyā</span>
+    </a>
+    <button type="button" class="nav-menu-btn" id="nav-menu-btn" onclick="alternarMenuMobile()" aria-label="Abrir menu" aria-expanded="false">☰</button>
+    <div class="nav-centro">
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#home">Início</a></li>
+        <li><a href="index.html#catalogo">Catálogo</a></li>
+        <li><a href="samkhya.html">Sāṃkhya</a></li>
+        <li><a href="index.html#sobre">Sobre</a></li>
+        <li><a href="index.html#contato">Contato</a></li>
+      </ul>
+    </div>
+    <div class="nav-direita">
+      <button type="button" class="nav-carrinho-btn" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
+        🛍
+        <span class="nav-carrinho-badge" id="carrinho-badge"></span>
+      </button>
+      <div class="nav-auth" id="nav-auth">
+        <!-- preenchido pelo auth.js: botão "Entrar" ou usuário logado -->
       </div>
     </div>
-  `;
-}
+  </nav>
 
-async function carregarPedidos() {
-  const container = document.getElementById('pedidos-lista');
-  if (!container) return;
+  <!-- CARRINHO DE COMPRAS -->
+  <div class="carrinho-overlay" id="carrinho-overlay" onclick="fecharCarrinho()"></div>
+  <aside class="carrinho-drawer" id="carrinho-drawer">
+    <div class="carrinho-cabecalho">
+      <h3>Seu Carrinho</h3>
+      <button type="button" class="carrinho-fechar" onclick="fecharCarrinho()" aria-label="Fechar carrinho">&times;</button>
+    </div>
+    <div class="carrinho-itens" id="carrinho-itens">
+      <p class="carrinho-vazio">Seu carrinho está vazio.</p>
+    </div>
+    <div class="carrinho-rodape" id="carrinho-rodape" style="display:none;">
+      <div class="carrinho-total-linha">
+        <span>Total</span>
+        <span id="carrinho-total">R$ 0,00</span>
+      </div>
+      <button type="button" class="btn-primary carrinho-finalizar" onclick="finalizarCompra()">Finalizar Compra</button>
+    </div>
+  </aside>
 
-  container.innerHTML = `<p class="livros-status">Carregando seus pedidos...</p>`;
+  <!-- MODAL DE LOGIN / CADASTRO -->
+  <div class="auth-modal" id="auth-modal">
+    <div class="auth-modal-conteudo">
+      <button class="auth-modal-fechar" onclick="fecharModalAuth()" aria-label="Fechar">&times;</button>
+      <h3 class="auth-modal-titulo" id="auth-titulo">Entrar</h3>
+      <p class="auth-contexto-nota" id="auth-contexto-nota"></p>
+      <form id="auth-form" data-modo="login" onsubmit="enviarFormAuth(event)">
+        <label class="auth-label" for="auth-email">E-mail</label>
+        <input type="email" id="auth-email" class="auth-input" required autocomplete="email" />
 
-  const { data: sessionData } = await supabaseClient.auth.getSession();
-  if (!sessionData.session) {
-    container.innerHTML = `<p class="livros-status">Entre para ver seus pedidos.</p>`;
-    abrirModalAuth('login', 'pedidos');
-    return;
-  }
+        <label class="auth-label" for="auth-senha">Senha</label>
+        <input type="password" id="auth-senha" class="auth-input" required minlength="6" autocomplete="current-password" />
 
-  // RLS garante que só voltam os pedidos do próprio usuário logado
-  const { data: pedidos, error: erroPedidos } = await supabaseClient
-    .from('pedidos')
-    .select('*')
-    .order('criado_em', { ascending: false });
+        <p class="auth-erro" id="auth-erro"></p>
 
-  if (erroPedidos) {
-    console.error('Erro ao buscar pedidos:', erroPedidos);
-    container.innerHTML = `<p class="livros-status">Não foi possível carregar seus pedidos no momento.</p>`;
-    return;
-  }
+        <button type="submit" class="btn-primary auth-submit" id="auth-submit">Entrar</button>
+      </form>
+      <p class="auth-alternar" id="auth-alternar-texto">
+        Ainda não tem conta? <a href="#" onclick="alternarModoAuth('cadastro'); return false;">Criar conta</a>
+      </p>
+    </div>
+  </div>
 
-  if (!pedidos || pedidos.length === 0) {
-    container.innerHTML = `<p class="livros-status">Você ainda não fez nenhum pedido.</p>`;
-    return;
-  }
+  <!-- MEUS PEDIDOS -->
+  <main class="pedidos-container">
+    <h1 class="pedidos-titulo">Meus Pedidos</h1>
+    <div id="pedidos-lista">
+      <p class="livros-status">Carregando seus pedidos...</p>
+    </div>
+  </main>
 
-  const pedidoIds = pedidos.map(p => p.id);
-  const { data: itens, error: erroItens } = await supabaseClient
-    .from('itens_pedido')
-    .select('*, livros(titulo, capa_url, autor)')
-    .in('pedido_id', pedidoIds);
+  <!-- FOOTER -->
+  <footer>
+    <span class="footer-text">© 2026 Livraria Ātma Vidyā — Curitiba, Brasil</span>
+    <div class="footer-links">
+      <a href="privacidade.html">Política de Privacidade</a>
+    </div>
+    <img src="img/marca/ashtanga_yantra.png" alt="Ashtanga Yantra" class="footer-om" />
+  </footer>
 
-  if (erroItens) {
-    console.error('Erro ao buscar itens dos pedidos:', erroItens);
-  }
-
-  const itensPorPedido = {};
-  (itens || []).forEach(item => {
-    if (!itensPorPedido[item.pedido_id]) itensPorPedido[item.pedido_id] = [];
-    itensPorPedido[item.pedido_id].push(item);
-  });
-
-  container.innerHTML = pedidos
-    .map(pedido => pedidoCardHtml(pedido, itensPorPedido[pedido.id] || []))
-    .join('');
-}
-
-carregarPedidos();
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="auth.js"></script>
+  <script src="cart.js"></script>
+  <script src="meus-pedidos.js"></script>
+</body>
+</html>
