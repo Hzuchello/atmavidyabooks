@@ -189,17 +189,24 @@ function normalizarBusca(texto) {
     .replace(/[\u0300-\u036f]/g, '');
 }
 
+function filtrarLivrosPorTermo(bruto) {
+  const termo = normalizarBusca(bruto);
+  if (!termo) return livros;
+  return livros.filter(l =>
+    normalizarBusca(l.titulo).includes(termo) || normalizarBusca(l.autor).includes(termo)
+  );
+}
+
 function buscarLivro() {
-  const input = document.getElementById('busca-input');
-  const termo = normalizarBusca((input?.value || '').trim());
+  const bruto = (document.getElementById('busca-input')?.value || '').trim();
 
-  const resultado = termo
-    ? livros.filter(l =>
-        normalizarBusca(l.titulo).includes(termo) || normalizarBusca(l.autor).includes(termo)
-      )
-    : livros;
+  if (!document.getElementById('livros-grid')) {
+    const q = encodeURIComponent(bruto);
+    window.location.href = q ? `index.html?q=${q}#catalogo` : 'index.html#catalogo';
+    return;
+  }
 
-  renderLivros(resultado);
+  renderLivros(filtrarLivrosPorTermo(bruto));
   document.getElementById('catalogo')?.scrollIntoView({ behavior: 'smooth' });
 }
 
@@ -259,7 +266,10 @@ async function carregarLivros() {
   }
 
   livros = data.map(mapLivroDoBanco);
-  renderLivros(livros);
+  const termoUrl = new URLSearchParams(window.location.search).get('q') || '';
+  const campoBusca = document.getElementById('busca-input');
+  if (termoUrl && campoBusca && !campoBusca.value) campoBusca.value = termoUrl;
+  renderLivros(filtrarLivrosPorTermo(campoBusca?.value || termoUrl));
   montarSlidesDestaque(livros);
 }
 
