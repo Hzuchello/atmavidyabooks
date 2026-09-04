@@ -24,6 +24,10 @@
         <li><a href="index.html#sobre">Sobre</a></li>
         <li><a href="index.html#contato">Contato</a></li>
       </ul>
+      <div class="nav-busca">
+        <input type="text" id="busca-input" class="nav-busca-input" placeholder="Buscar produto..." onkeydown="if(event.key==='Enter'){buscarLivro();}" />
+        <button type="button" class="nav-busca-btn" onclick="buscarLivro()" aria-label="Buscar">🔍</button>
+      </div>
     </div>
     <div class="nav-direita">
       <button type="button" class="nav-carrinho-btn" onclick="abrirCarrinho()" aria-label="Abrir carrinho">
@@ -169,5 +173,6 @@
   <script src="supabase-client.js"></script>
   <script src="auth.js"></script>
   <script src="cart.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
