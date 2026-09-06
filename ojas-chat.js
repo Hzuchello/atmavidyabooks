@@ -82,8 +82,8 @@
               <button type="submit">Enviar</button>
             </form>
             <div id="ojas-wa-box" hidden>
-              <p id="ojas-wa-txt"></p>
-              <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">WhatsApp</a>
+              <p id="ojas-wa-txt" hidden></p>
+              <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">Falar com humano</a>
             </div>
           </div>
         </div>
@@ -119,20 +119,20 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function oferecerWhatsapp(texto) {
-      waTxt.textContent = texto;
+    function oferecerWhatsapp() {
+      waTxt.hidden = true;
       waBox.hidden = false;
       form.hidden = false;
     }
 
-    function encerrarChat(texto) {
-      waTxt.textContent = texto;
+    function encerrarChat() {
+      waTxt.hidden = true;
       waBox.hidden = false;
       form.hidden = true;
     }
 
     function mostrarOffline() {
-      encerrarChat('Ôjas está fora do ar neste momento. Siga no WhatsApp.');
+      encerrarChat();
     }
 
     let apresentou = false;
@@ -157,7 +157,7 @@
     });
 
     wa.addEventListener('click', () => {
-      encerrarChat('Atendimento neste chat encerrado. Siga no WhatsApp.');
+      encerrarChat();
     });
 
     form.addEventListener('submit', async (ev) => {
@@ -169,13 +169,12 @@
       bolha('eu', texto);
 
       if (DESPEDIDA.test(texto)) {
-        encerrarChat('Atendimento neste chat encerrado. Se precisar, o WhatsApp da casa.');
+        encerrarChat();
         return;
       }
 
       if (PEDIU_WA.test(texto)) {
-        oferecerWhatsapp('WhatsApp da Livraria Ātma Vidyā.');
-        bolha('bot', 'Aqui está o WhatsApp da livraria. O chat continua aberto se quiser seguir aqui.');
+        oferecerWhatsapp();
         return;
       }
 
@@ -184,12 +183,12 @@
         const falou = resp || '';
         if (!falou) {
           bolha('bot', 'Não obtive resposta agora.');
-          oferecerWhatsapp('Pode seguir pelo WhatsApp, ou tente de novo aqui.');
+          oferecerWhatsapp();
           return;
         }
         bolha('bot', falou);
         if (PEDIU_WA.test(falou) || /99128-3609|991283609/.test(falou)) {
-          oferecerWhatsapp('WhatsApp da livraria — o chat permanece aberto.');
+          oferecerWhatsapp();
         }
       } catch (err) {
         mostrarOffline();
