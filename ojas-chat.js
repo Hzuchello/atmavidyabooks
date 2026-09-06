@@ -47,19 +47,6 @@
     }
   }
 
-  async function enviarNewsletterChat(nome, email) {
-    if (!window.supabaseClient) return;
-    try {
-      await window.supabaseClient.from('newsletter_inscricoes').insert({
-        nome,
-        email,
-        telefone: 'chat-ojas'
-      });
-    } catch (err) {
-      console.warn('newsletter (Ôjas):', err);
-    }
-  }
-
   function extrairTexto(data) {
     if (data == null) return '';
     if (typeof data === 'string') return data.trim();
@@ -76,7 +63,7 @@
     return (bruto || '').toString().trim();
   }
 
-  async function falarComOjas(texto, nome) {
+  async function falarComOjas(texto) {
     const res = await fetch(WEBHOOK, {
       method: 'POST',
       headers: {
@@ -86,8 +73,7 @@
       body: JSON.stringify({
         action: 'sendMessage',
         sessionId: sessionId(),
-        chatInput: texto,
-        metadata: { nome: nome || '' }
+        chatInput: texto
       })
     });
     const raw = await res.text();
@@ -110,15 +96,6 @@
             <span>livreiro virtual</span>
             <button type="button" id="ojas-fechar" aria-label="Fechar">×</button>
           </div>
-          <div id="ojas-gate">
-            <p>Antes do atendimento, seu nome e e-mail. Usamos também na newsletter da casa.</p>
-            <label>Nome</label>
-            <input type="text" id="ojas-nome" autocomplete="name" required />
-            <label>E-mail</label>
-            <input type="email" id="ojas-email" autocomplete="email" required />
-            <p id="ojas-gate-status"></p>
-            <button type="button" class="btn-primary" id="ojas-entrar">Continuar</button>
-          </div>
           <div id="ojas-offline" hidden>
             <p>Ôjas está fora do ar neste momento.</p>
             <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">WhatsApp</a>
@@ -135,11 +112,10 @@
     document.body.appendChild(root);
 
     const painel = root.querySelector('#ojas-painel');
-    const gate = root.querySelector('#ojas-gate');
     const offline = root.querySelector('#ojas-offline');
     const chat = root.querySelector('#ojas-chat');
     const msgs = root.querySelector('#ojas-msgs');
-    const status = root.querySelector('#ojas-gate-status');
+    const form = root.querySelector('#ojas-form');
     const wa = root.querySelector('#ojas-wa');
     wa.href = 'https://wa.me/' + WHATSAPP;
 
@@ -163,47 +139,39 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    root.querySelector('#ojas-fab').addEventListener('click', () => {
-      painel.hidden = !painel.hidden;
-    });
-    root.querySelector('#ojas-fechar').addEventListener('click', () => {
-      painel.hidden = true;
-    });
+    function encerrarNoWhatsapp(texto) {
+      if (!/whatsapp|99128-3609|991283609/i.test(texto || '')) return;
+      form.hidden = true;
+      offline.hidden = false;
+    }
 
-    root.querySelector('#ojas-entrar').addEventListener('click', async () => {
-      const nome = root.querySelector('#ojas-nome').value.trim();
-      const email = root.querySelector('#ojas-email').value.trim();
-      if (!nome || !email) {
-        status.textContent = 'Preencha nome e e-mail.';
-        return;
-      }
-      status.textContent = 'Verificando o livreiro…';
+    let abertoUmaVez = false;
+
+    async function abrirPainel() {
+      painel.hidden = false;
+      if (abertoUmaVez) return;
+      abertoUmaVez = true;
+      offline.hidden = true;
+      chat.hidden = true;
       const online = await pingBot();
-      await enviarNewsletterChat(nome, email);
-      sessionStorage.setItem('ojas_nome', nome);
-      sessionStorage.setItem('ojas_email', email);
-      gate.hidden = true;
       if (!online) {
         offline.hidden = false;
         return;
       }
       chat.hidden = false;
-      bolha('bot', 'Um instante…');
-      try {
-        const resp = await falarComOjas(
-          'O visitante se chama ' + nome + '. Cumprimente em uma frase curta, sem Markdown, e pergunte como pode ajudar no acervo.',
-          nome
-        );
-        const ultima = msgs.lastElementChild;
-        if (ultima) {
-          ultima.textContent = limparResposta(resp || 'Ôjas no ar. Escreva sua pergunta.');
-        }
-      } catch (err) {
-        bolha('bot', 'Ôjas no ar, mas a resposta não chegou. Veja Executions no n8n.');
-      }
+      form.hidden = false;
+    }
+
+    root.querySelector('#ojas-fab').addEventListener('click', () => {
+      if (painel.hidden) abrirPainel();
+      else painel.hidden = true;
     });
 
-    root.querySelector('#ojas-form').addEventListener('submit', async (ev) => {
+    root.querySelector('#ojas-fechar').addEventListener('click', () => {
+      painel.hidden = true;
+    });
+
+    form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const input = root.querySelector('#ojas-input');
       const texto = input.value.trim();
@@ -211,11 +179,13 @@
       input.value = '';
       bolha('eu', texto);
       try {
-        const nome = sessionStorage.getItem('ojas_nome') || '';
-        const resp = await falarComOjas(texto, nome);
-        bolha('bot', resp || 'Não obtive resposta. Tente o WhatsApp.');
+        const resp = await falarComOjas(texto);
+        const falou = resp || 'Não obtive resposta. Tente o WhatsApp.';
+        bolha('bot', falou);
+        encerrarNoWhatsapp(falou);
       } catch (err) {
         bolha('bot', 'Ôjas saiu do ar. Use o WhatsApp.');
+        form.hidden = true;
         offline.hidden = false;
       }
     });
