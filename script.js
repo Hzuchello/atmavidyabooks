@@ -30,7 +30,8 @@ const categoriaLabel = {
   yoga: "Yôga",
   desenvolvimento: "Psicologia",
   sagrado: "Filosofia Hindu",
-  derose: "Método DeRose"
+  derose: "Método DeRose",
+  cursos: "Cursos e palestras"
 };
 
 function getCategoriaLabel(categoria) {
