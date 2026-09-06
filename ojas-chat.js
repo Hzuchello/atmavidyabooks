@@ -4,7 +4,7 @@
     window.OJAS_WEBHOOK_N8N ||
     'https://overfunctioning-undefensibly-johnette.ngrok-free.dev/webhook/b67fa726-41c4-497c-8bcb-ba2e24fab203/chat';
   const WHATSAPP = '5541991283609';
-  const TIMEOUT_MS = 4000;
+  const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
 
   function el(html) {
     const t = document.createElement('template');
@@ -20,31 +20,6 @@
       sessionStorage.setItem(k, id);
     }
     return id;
-  }
-
-  async function pingBot() {
-    const ctrl = new AbortController();
-    const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-    try {
-      const res = await fetch(WEBHOOK, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'ngrok-skip-browser-warning': 'true'
-        },
-        body: JSON.stringify({
-          action: 'sendMessage',
-          sessionId: 'ojas-ping',
-          chatInput: 'ping'
-        }),
-        signal: ctrl.signal
-      });
-      clearTimeout(t);
-      return res.ok || res.status === 200 || res.status === 201;
-    } catch (e) {
-      clearTimeout(t);
-      return false;
-    }
   }
 
   function extrairTexto(data) {
@@ -80,6 +55,7 @@
     let data = {};
     try { data = raw ? JSON.parse(raw) : {}; } catch (e) { data = { output: raw }; }
     const textoResp = extrairTexto(data);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
     if (!textoResp) console.warn('Ôjas sem texto. HTTP', res.status, raw.slice(0, 400));
     return textoResp;
   }
@@ -97,10 +73,10 @@
             <button type="button" id="ojas-fechar" aria-label="Fechar">×</button>
           </div>
           <div id="ojas-offline" hidden>
-            <p>Ôjas está fora do ar neste momento.</p>
+            <p id="ojas-offline-txt">Ôjas está fora do ar neste momento.</p>
             <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">WhatsApp</a>
           </div>
-          <div id="ojas-chat" hidden>
+          <div id="ojas-chat">
             <div id="ojas-msgs"></div>
             <form id="ojas-form">
               <input type="text" id="ojas-input" placeholder="Escreva ao Ôjas…" autocomplete="off" />
@@ -113,6 +89,7 @@
 
     const painel = root.querySelector('#ojas-painel');
     const offline = root.querySelector('#ojas-offline');
+    const offlineTxt = root.querySelector('#ojas-offline-txt');
     const chat = root.querySelector('#ojas-chat');
     const msgs = root.querySelector('#ojas-msgs');
     const form = root.querySelector('#ojas-form');
@@ -139,27 +116,28 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function encerrarNoWhatsapp(texto) {
-      if (!/whatsapp|99128-3609|991283609/i.test(texto || '')) return;
-      form.hidden = true;
+    function mostrarWhatsapp(motivo) {
+      offlineTxt.textContent = motivo;
       offline.hidden = false;
+      form.hidden = true;
     }
 
-    let abertoUmaVez = false;
-
-    async function abrirPainel() {
-      painel.hidden = false;
-      if (abertoUmaVez) return;
-      abertoUmaVez = true;
-      offline.hidden = true;
+    function mostrarOffline() {
       chat.hidden = true;
-      const online = await pingBot();
-      if (!online) {
-        offline.hidden = false;
-        return;
-      }
+      mostrarWhatsapp('Ôjas está fora do ar neste momento.');
+    }
+
+    let apresentou = false;
+
+    function abrirPainel() {
+      painel.hidden = false;
+      offline.hidden = true;
       chat.hidden = false;
       form.hidden = false;
+      if (!apresentou) {
+        apresentou = true;
+        bolha('bot', APRESENTACAO);
+      }
     }
 
     root.querySelector('#ojas-fab').addEventListener('click', () => {
@@ -180,13 +158,18 @@
       bolha('eu', texto);
       try {
         const resp = await falarComOjas(texto);
-        const falou = resp || 'Não obtive resposta. Tente o WhatsApp.';
+        const falou = resp || '';
+        if (!falou) {
+          bolha('bot', 'Não obtive resposta agora.');
+          mostrarWhatsapp('Pode seguir pelo WhatsApp da livraria.');
+          return;
+        }
         bolha('bot', falou);
-        encerrarNoWhatsapp(falou);
+        if (/whatsapp|99128-3609|991283609/i.test(falou)) {
+          mostrarWhatsapp('Atendimento neste chat encerrado. Siga no WhatsApp.');
+        }
       } catch (err) {
-        bolha('bot', 'Ôjas saiu do ar. Use o WhatsApp.');
-        form.hidden = true;
-        offline.hidden = false;
+        mostrarOffline();
       }
     });
   }
