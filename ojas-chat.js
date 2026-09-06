@@ -4,7 +4,10 @@
     window.OJAS_WEBHOOK_N8N ||
     'https://overfunctioning-undefensibly-johnette.ngrok-free.dev/webhook/b67fa726-41c4-497c-8bcb-ba2e24fab203/chat';
   const WHATSAPP = '5541991283609';
+  const WA_LINK = 'https://wa.me/' + WHATSAPP;
   const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
+  const PEDIU_WA = /whatsapp|zap\b|wa\.me|falar com (um )?humano|atendente humano/i;
+  const DESPEDIDA = /^(tchau|adeus|encerrar|encera|até logo|ate logo|obrigad[oa]\.?)$/i;
 
   function el(html) {
     const t = document.createElement('template');
@@ -72,29 +75,29 @@
             <span>livreiro virtual</span>
             <button type="button" id="ojas-fechar" aria-label="Fechar">×</button>
           </div>
-          <div id="ojas-offline" hidden>
-            <p id="ojas-offline-txt">Ôjas está fora do ar neste momento.</p>
-            <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">WhatsApp</a>
-          </div>
           <div id="ojas-chat">
             <div id="ojas-msgs"></div>
             <form id="ojas-form">
               <input type="text" id="ojas-input" placeholder="Escreva ao Ôjas…" autocomplete="off" />
               <button type="submit">Enviar</button>
             </form>
+            <div id="ojas-wa-box" hidden>
+              <p id="ojas-wa-txt"></p>
+              <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">WhatsApp</a>
+            </div>
           </div>
         </div>
       </div>`);
     document.body.appendChild(root);
 
     const painel = root.querySelector('#ojas-painel');
-    const offline = root.querySelector('#ojas-offline');
-    const offlineTxt = root.querySelector('#ojas-offline-txt');
     const chat = root.querySelector('#ojas-chat');
     const msgs = root.querySelector('#ojas-msgs');
     const form = root.querySelector('#ojas-form');
+    const waBox = root.querySelector('#ojas-wa-box');
+    const waTxt = root.querySelector('#ojas-wa-txt');
     const wa = root.querySelector('#ojas-wa');
-    wa.href = 'https://wa.me/' + WHATSAPP;
+    wa.href = WA_LINK;
 
     function limparResposta(texto) {
       return String(texto || '')
@@ -116,26 +119,30 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function mostrarWhatsapp(motivo) {
-      offlineTxt.textContent = motivo;
-      offline.hidden = false;
+    function oferecerWhatsapp(texto) {
+      waTxt.textContent = texto;
+      waBox.hidden = false;
+      form.hidden = false;
+    }
+
+    function encerrarChat(texto) {
+      waTxt.textContent = texto;
+      waBox.hidden = false;
       form.hidden = true;
     }
 
     function mostrarOffline() {
-      chat.hidden = true;
-      mostrarWhatsapp('Ôjas está fora do ar neste momento.');
+      encerrarChat('Ôjas está fora do ar neste momento. Siga no WhatsApp.');
     }
 
     let apresentou = false;
 
     function abrirPainel() {
       painel.hidden = false;
-      offline.hidden = true;
       chat.hidden = false;
-      form.hidden = false;
       if (!apresentou) {
         apresentou = true;
+        form.hidden = false;
         bolha('bot', APRESENTACAO);
       }
     }
@@ -149,6 +156,10 @@
       painel.hidden = true;
     });
 
+    wa.addEventListener('click', () => {
+      encerrarChat('Atendimento neste chat encerrado. Siga no WhatsApp.');
+    });
+
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const input = root.querySelector('#ojas-input');
@@ -156,17 +167,29 @@
       if (!texto) return;
       input.value = '';
       bolha('eu', texto);
+
+      if (DESPEDIDA.test(texto)) {
+        encerrarChat('Atendimento neste chat encerrado. Se precisar, o WhatsApp da casa.');
+        return;
+      }
+
+      if (PEDIU_WA.test(texto)) {
+        oferecerWhatsapp('WhatsApp da Livraria Ātma Vidyā.');
+        bolha('bot', 'Aqui está o WhatsApp da livraria. O chat continua aberto se quiser seguir aqui.');
+        return;
+      }
+
       try {
         const resp = await falarComOjas(texto);
         const falou = resp || '';
         if (!falou) {
           bolha('bot', 'Não obtive resposta agora.');
-          mostrarWhatsapp('Pode seguir pelo WhatsApp da livraria.');
+          oferecerWhatsapp('Pode seguir pelo WhatsApp, ou tente de novo aqui.');
           return;
         }
         bolha('bot', falou);
-        if (/whatsapp|99128-3609|991283609/i.test(falou)) {
-          mostrarWhatsapp('Atendimento neste chat encerrado. Siga no WhatsApp.');
+        if (PEDIU_WA.test(falou) || /99128-3609|991283609/.test(falou)) {
+          oferecerWhatsapp('WhatsApp da livraria — o chat permanece aberto.');
         }
       } catch (err) {
         mostrarOffline();
