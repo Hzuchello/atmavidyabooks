@@ -1945,37 +1945,76 @@ footer {
 #ojas-root { position: relative; z-index: 80; }
 #ojas-fab {
   position: fixed; right: 22px; bottom: 22px;
-  width: 58px; height: 58px; border-radius: 50%;
-  border: 1px solid var(--acafrao);
-  background: var(--indigo); color: var(--creme);
-  font-family: var(--font-ui); font-size: 13px; letter-spacing: .04em;
-  cursor: pointer; box-shadow: 0 8px 24px rgba(27,31,59,.35);
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 0;
+  background: var(--indigo, #1B1F3B); color: #E8E2D6;
+  font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em;
+  text-transform: uppercase;
+  cursor: pointer; box-shadow: 0 10px 28px rgba(27, 31, 59, .4);
 }
+#ojas-fab:hover { background: var(--indigo-soft, #2A3055); }
 #ojas-painel {
-  position: fixed; right: 22px; bottom: 90px;
+  position: fixed; right: 22px; bottom: 88px;
   width: min(360px, calc(100vw - 32px));
-  background: var(--creme-card, #F5F0E6);
-  border: 1px solid var(--borda, #D9D2C4);
-  color: var(--texto, #2C2A26);
-  padding: 16px 16px 14px;
+  background: var(--indigo, #1B1F3B);
+  border: 1px solid #2A3055;
+  color: #E8E2D6;
+  padding: 16px;
   max-height: min(70vh, 520px);
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 16px 40px rgba(15, 17, 32, .45);
 }
 #ojas-painel[hidden] { display: none !important; }
-.ojas-cab { display: flex; align-items: baseline; gap: 8px; }
-.ojas-cab strong { font-family: var(--font-ui); }
-.ojas-cab span { font-size: 12px; color: var(--texto-muted); flex: 1; }
-#ojas-fechar { margin-left: auto; border: 0; background: none; font-size: 22px; cursor: pointer; color: var(--texto-muted); }
-#ojas-gate label, #ojas-gate input { display: block; width: 100%; }
-#ojas-gate input, #ojas-input {
-  margin: 4px 0 8px; padding: 8px 10px;
-  border: 1px solid var(--borda); background: #fff; font-family: var(--font-body);
+.ojas-cab { display: flex; align-items: baseline; gap: 8px; color: #E8E2D6; }
+.ojas-cab strong { font-family: var(--font-ui); font-weight: 500; letter-spacing: .04em; }
+.ojas-cab span { font-size: 11px; color: #9AA0B8; flex: 1; }
+#ojas-fechar {
+  margin-left: auto; border: 0; background: none;
+  font-size: 20px; line-height: 1; cursor: pointer; color: #9AA0B8;
 }
-#ojas-gate p, #ojas-offline p { font-size: .95rem; line-height: 1.5; }
-#ojas-msgs { overflow-y: auto; flex: 1; min-height: 160px; max-height: 280px; display: flex; flex-direction: column; gap: 8px; }
-.ojas-msg { padding: 8px 10px; font-size: .92rem; line-height: 1.4; }
-.ojas-msg-bot { background: #efe8da; }
-.ojas-msg-eu { background: var(--indigo); color: #f5f0e6; align-self: flex-end; }
-#ojas-form { display: flex; gap: 6px; }
-#ojas-form button, #ojas-entrar { cursor: pointer; }
-#ojas-wa { display: inline-block; text-align: center; text-decoration: none; padding: 10px 14px; }
+#ojas-fechar:hover { color: #E8E2D6; }
+#ojas-gate label { display: block; font-size: 12px; color: #9AA0B8; margin-top: 6px; }
+#ojas-gate input, #ojas-input {
+  width: 100%; margin: 4px 0 0; padding: 10px 12px;
+  border: 1px solid #3A4166; background: #12152A; color: #E8E2D6;
+  font-family: var(--font-body); font-size: .95rem;
+}
+#ojas-gate input:focus, #ojas-input:focus {
+  outline: none; border-color: #C9782F;
+}
+#ojas-gate p, #ojas-offline p { font-size: .92rem; line-height: 1.5; color: #C8CBD8; }
+#ojas-msgs {
+  overflow-y: auto; flex: 1; min-height: 160px; max-height: 280px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.ojas-msg {
+  padding: 10px 12px; font-size: .92rem; line-height: 1.45;
+  max-width: 92%; white-space: pre-wrap;
+}
+.ojas-msg-bot { background: #2A3055; color: #E8E2D6; align-self: flex-start; }
+.ojas-msg-eu { background: #12152A; color: #E8E2D6; border: 1px solid #3A4166; align-self: flex-end; }
+#ojas-form { display: flex; gap: 8px; align-items: stretch; }
+#ojas-form #ojas-input { flex: 1; margin: 0; }
+#ojas-form button,
+#ojas-entrar {
+  cursor: pointer;
+  border: 0;
+  background: #2A3055;
+  color: #E8E2D6;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 0 16px;
+  min-height: 42px;
+}
+#ojas-form button:hover,
+#ojas-entrar:hover { background: #343B66; }
+#ojas-entrar { width: 100%; margin-top: 8px; min-height: 44px; }
+#ojas-wa {
+  display: inline-block; text-align: center; text-decoration: none;
+  padding: 12px 16px; background: #2A3055; color: #E8E2D6;
+  font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em;
+  text-transform: uppercase;
+}
+#ojas-wa:hover { background: #343B66; }
