@@ -1993,8 +1993,10 @@ footer {
 }
 .ojas-msg-bot { background: #2A3055; color: #E8E2D6; align-self: flex-start; }
 .ojas-msg-eu { background: #12152A; color: #E8E2D6; border: 1px solid #3A4166; align-self: flex-end; }
-#ojas-form { display: flex; gap: 8px; align-items: stretch; }
+#ojas-chat { display: flex; flex-direction: column; gap: 16px; }
+#ojas-form { display: flex; gap: 8px; align-items: stretch; margin: 0; }
 #ojas-form #ojas-input { flex: 1; margin: 0; }
+#ojas-wa-box { margin-top: 6px; }
 #ojas-form button,
 #ojas-entrar {
   cursor: pointer;
@@ -2012,7 +2014,8 @@ footer {
 #ojas-entrar:hover { background: #343B66; }
 #ojas-entrar { width: 100%; margin-top: 8px; min-height: 44px; }
 #ojas-wa {
-  display: inline-block; text-align: center; text-decoration: none;
+  display: block; width: 100%; box-sizing: border-box;
+  text-align: center; text-decoration: none;
   padding: 12px 16px; background: #2A3055; color: #E8E2D6;
   font-family: var(--font-ui); font-size: 12px; letter-spacing: .08em;
   text-transform: uppercase;
