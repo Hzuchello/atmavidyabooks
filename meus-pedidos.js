@@ -98,6 +98,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js"></script>
+  <script src="script.js"></script>
   <script src="auth.js"></script>
   <script src="cart.js"></script>
   <script src="meus-pedidos.js"></script>
