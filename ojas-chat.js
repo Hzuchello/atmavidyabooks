@@ -6,6 +6,21 @@
   const WHATSAPP = '5541991283609';
   const WA_LINK = 'https://wa.me/' + WHATSAPP;
   const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
+  const HIST_KEY = 'ojas_historico';
+
+  function lerHistorico() {
+    try {
+      const bruto = sessionStorage.getItem(HIST_KEY);
+      const lista = bruto ? JSON.parse(bruto) : [];
+      return Array.isArray(lista) ? lista : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function gravarHistorico(lista) {
+    sessionStorage.setItem(HIST_KEY, JSON.stringify(lista.slice(-40)));
+  }
 
   function el(html) {
     const t = document.createElement('template');
@@ -104,22 +119,27 @@
         .trim();
     }
 
-    function bolha(quem, texto) {
+    function bolha(quem, texto, persistir) {
+      const limpo = quem === 'bot' ? limparResposta(texto) : texto;
       const b = document.createElement('div');
       b.className = 'ojas-msg ojas-msg-' + quem;
-      b.textContent = quem === 'bot' ? limparResposta(texto) : texto;
+      b.textContent = limpo;
       msgs.appendChild(b);
       msgs.scrollTop = msgs.scrollHeight;
+      if (persistir !== false) {
+        const hist = lerHistorico();
+        hist.push({ quem: quem, texto: limpo });
+        gravarHistorico(hist);
+      }
     }
 
-    let apresentou = false;
+    lerHistorico().forEach(function (item) {
+      if (item && item.quem && item.texto) bolha(item.quem, item.texto, false);
+    });
 
     function abrirPainel() {
       painel.hidden = false;
-      if (!apresentou) {
-        apresentou = true;
-        bolha('bot', APRESENTACAO);
-      }
+      if (!lerHistorico().length) bolha('bot', APRESENTACAO);
     }
 
     root.querySelector('#ojas-fab').addEventListener('click', () => {
