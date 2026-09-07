@@ -7,6 +7,8 @@
   const WA_LINK = 'https://wa.me/' + WHATSAPP;
   const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
   const HIST_KEY = 'ojas_historico';
+  const SID_KEY = 'ojas_session';
+  const UID_KEY = 'ojas_uid';
 
   function lerHistorico() {
     try {
@@ -22,6 +24,48 @@
     sessionStorage.setItem(HIST_KEY, JSON.stringify(lista.slice(-40)));
   }
 
+  function uidGuardado() {
+    return sessionStorage.getItem(UID_KEY) || '';
+  }
+
+  function uidDaSessao(session) {
+    return (session && session.user && session.user.id) || '';
+  }
+
+  function resetarConversa() {
+    sessionStorage.removeItem(HIST_KEY);
+    sessionStorage.removeItem(SID_KEY);
+    sessionStorage.setItem(UID_KEY, '');
+    const msgs = document.getElementById('ojas-msgs');
+    if (msgs) msgs.innerHTML = '';
+  }
+
+  function aplicarAuth(event, session) {
+    const novo = uidDaSessao(session);
+    const velho = uidGuardado();
+
+    if (event === 'SIGNED_OUT' || (velho && novo && velho !== novo)) {
+      resetarConversa();
+      if (novo) sessionStorage.setItem(UID_KEY, novo);
+      const painel = document.getElementById('ojas-painel');
+      if (painel && !painel.hidden) {
+        const msgs = document.getElementById('ojas-msgs');
+        if (msgs && !msgs.children.length) {
+          const b = document.createElement('div');
+          b.className = 'ojas-msg ojas-msg-bot';
+          b.textContent = APRESENTACAO;
+          msgs.appendChild(b);
+          gravarHistorico([{ quem: 'bot', texto: APRESENTACAO }]);
+        }
+      }
+      return;
+    }
+
+    if (novo) sessionStorage.setItem(UID_KEY, novo);
+  }
+
+  window.ojasAuth = aplicarAuth;
+
   function el(html) {
     const t = document.createElement('template');
     t.innerHTML = html.trim();
@@ -29,11 +73,10 @@
   }
 
   function sessionId() {
-    const k = 'ojas_session';
-    let id = sessionStorage.getItem(k);
+    let id = sessionStorage.getItem(SID_KEY);
     if (!id) {
       id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now());
-      sessionStorage.setItem(k, id);
+      sessionStorage.setItem(SID_KEY, id);
     }
     return id;
   }
@@ -74,6 +117,13 @@
     if (!res.ok) throw new Error('HTTP ' + res.status);
     if (!textoResp) console.warn('Ôjas sem texto. HTTP', res.status, raw.slice(0, 400));
     return textoResp;
+  }
+
+  function ouvirAuth() {
+    if (!window.supabaseClient || !window.supabaseClient.auth) return;
+    window.supabaseClient.auth.onAuthStateChange(function (event, session) {
+      aplicarAuth(event, session);
+    });
   }
 
   function montar() {
@@ -165,6 +215,8 @@
         bolha('bot', 'Ôjas não respondeu agora. Use Falar com humano.');
       }
     });
+
+    ouvirAuth();
   }
 
   if (document.readyState === 'loading') {
