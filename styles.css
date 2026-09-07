@@ -530,12 +530,6 @@ nav {
   height: auto;
   margin-bottom: 22px;
   filter: drop-shadow(0 8px 24px rgba(27, 31, 59, 0.15));
-  animation: floatOm 5s ease-in-out infinite;
-}
-
-@keyframes floatOm {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-10px); }
 }
 
 .hero-eyebrow {
@@ -1381,12 +1375,6 @@ section {
   height: auto;
   opacity: 0.85;
   filter: drop-shadow(0 16px 40px rgba(27, 31, 59, 0.12));
-  animation: rotateSlow 80s linear infinite;
-}
-
-@keyframes rotateSlow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
 }
 
 .sobre-body {
