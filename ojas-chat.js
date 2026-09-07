@@ -6,8 +6,6 @@
   const WHATSAPP = '5541991283609';
   const WA_LINK = 'https://wa.me/' + WHATSAPP;
   const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
-  const PEDIU_WA = /whatsapp|zap\b|wa\.me|falar com (um )?humano|atendente humano/i;
-  const DESPEDIDA = /^(tchau|adeus|encerrar|encera|até logo|ate logo|obrigad[oa]\.?)$/i;
 
   function el(html) {
     const t = document.createElement('template');
@@ -81,8 +79,7 @@
               <input type="text" id="ojas-input" placeholder="Escreva ao Ôjas…" autocomplete="off" />
               <button type="submit">Enviar</button>
             </form>
-            <div id="ojas-wa-box" hidden>
-              <p id="ojas-wa-txt" hidden></p>
+            <div id="ojas-wa-box">
               <a class="btn-primary" id="ojas-wa" target="_blank" rel="noopener">Falar com humano</a>
             </div>
           </div>
@@ -91,13 +88,9 @@
     document.body.appendChild(root);
 
     const painel = root.querySelector('#ojas-painel');
-    const chat = root.querySelector('#ojas-chat');
     const msgs = root.querySelector('#ojas-msgs');
     const form = root.querySelector('#ojas-form');
-    const waBox = root.querySelector('#ojas-wa-box');
-    const waTxt = root.querySelector('#ojas-wa-txt');
-    const wa = root.querySelector('#ojas-wa');
-    wa.href = WA_LINK;
+    root.querySelector('#ojas-wa').href = WA_LINK;
 
     function limparResposta(texto) {
       return String(texto || '')
@@ -119,30 +112,12 @@
       msgs.scrollTop = msgs.scrollHeight;
     }
 
-    function oferecerWhatsapp() {
-      waTxt.hidden = true;
-      waBox.hidden = false;
-      form.hidden = false;
-    }
-
-    function encerrarChat() {
-      waTxt.hidden = true;
-      waBox.hidden = false;
-      form.hidden = true;
-    }
-
-    function mostrarOffline() {
-      encerrarChat();
-    }
-
     let apresentou = false;
 
     function abrirPainel() {
       painel.hidden = false;
-      chat.hidden = false;
       if (!apresentou) {
         apresentou = true;
-        form.hidden = false;
         bolha('bot', APRESENTACAO);
       }
     }
@@ -156,10 +131,6 @@
       painel.hidden = true;
     });
 
-    wa.addEventListener('click', () => {
-      encerrarChat();
-    });
-
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const input = root.querySelector('#ojas-input');
@@ -167,31 +138,11 @@
       if (!texto) return;
       input.value = '';
       bolha('eu', texto);
-
-      if (DESPEDIDA.test(texto)) {
-        encerrarChat();
-        return;
-      }
-
-      if (PEDIU_WA.test(texto)) {
-        oferecerWhatsapp();
-        return;
-      }
-
       try {
         const resp = await falarComOjas(texto);
-        const falou = resp || '';
-        if (!falou) {
-          bolha('bot', 'Não obtive resposta agora.');
-          oferecerWhatsapp();
-          return;
-        }
-        bolha('bot', falou);
-        if (PEDIU_WA.test(falou) || /99128-3609|991283609/.test(falou)) {
-          oferecerWhatsapp();
-        }
+        bolha('bot', resp || 'Não obtive resposta agora. Use Falar com humano se preferir.');
       } catch (err) {
-        mostrarOffline();
+        bolha('bot', 'Ôjas não respondeu agora. Use Falar com humano.');
       }
     });
   }
