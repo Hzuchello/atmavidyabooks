@@ -498,11 +498,11 @@ nav {
     display: none;
   }
 
-.hero-om {
-  width: 140px;
-  height: auto;
-  margin-bottom: 22px;
-}
+  .hero-om {
+    width: 96px;
+    margin-bottom: 12px;
+  }
+
   .hero-title {
     font-size: 1.7rem;
     margin-bottom: 10px;
@@ -526,7 +526,7 @@ nav {
 }
 
 .hero-om {
-  width: 84px;
+  width: 140px;
   height: auto;
   margin-bottom: 22px;
   filter: drop-shadow(0 8px 24px rgba(27, 31, 59, 0.15));
