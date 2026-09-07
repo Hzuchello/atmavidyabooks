@@ -118,6 +118,7 @@ function atualizarNavAuth(session) {
 // Reage a login, logout e restauração automática de sessão (ex: ao recarregar a página)
 supabaseClient.auth.onAuthStateChange((_event, session) => {
   atualizarNavAuth(session);
+  if (typeof window.ojasAuth === 'function') window.ojasAuth(_event, session);
 });
 
 // Estado inicial ao carregar a página
