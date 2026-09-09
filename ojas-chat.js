@@ -2,7 +2,7 @@
 (function () {
   const WEBHOOK =
     window.OJAS_WEBHOOK_N8N ||
-    'https://overfunctioning-undefensibly-johnette.ngrok-free.dev/webhook/b67fa726-41c4-497c-8bcb-ba2e24fab203/chat';
+    'https://overfunctioning-undefensibly-johnette.ngrok-free.dev';
   const WHATSAPP = '5541991283609';
   const WA_LINK = 'https://wa.me/' + WHATSAPP;
   const APRESENTACAO = 'Oi, sou Ôjas, seu livreiro digital. Em que posso ajudar no acervo?';
