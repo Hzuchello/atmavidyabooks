@@ -37,7 +37,12 @@
     return (c / 100).toFixed(2);
   }
 
+  const VIEW_KEY = 'admin_view';
+
   function irPara(nome) {
+    const permitidas = ['resumo', 'acervo', 'estoque', 'agenda', 'pedidos'];
+    if (permitidas.indexOf(nome) === -1) nome = 'resumo';
+    sessionStorage.setItem(VIEW_KEY, nome);
     document.querySelectorAll('.admin-view').forEach(function (v) {
       v.classList.toggle('admin-escondido', v.id !== 'view-' + nome);
     });
@@ -420,7 +425,8 @@
       mostrar(negado);
       return;
     }
+    const jaAberto = !app.classList.contains('admin-escondido');
     mostrar(app);
-    irPara('resumo');
+    if (!jaAberto) irPara(sessionStorage.getItem(VIEW_KEY) || 'resumo');
   });
 })();
