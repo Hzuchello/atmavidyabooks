@@ -49,6 +49,8 @@
     document.querySelectorAll('.admin-nav button[data-view]').forEach(function (b) {
       b.classList.toggle('ativo', b.getAttribute('data-view') === nome);
     });
+    if (typeof fecharModal === 'function') fecharModal();
+    if (typeof devolverForm === 'function') devolverForm();
     if (nome === 'resumo') carregarResumo();
     if (nome === 'acervo') carregarAcervo();
     if (nome === 'estoque') carregarEstoque();
@@ -215,11 +217,14 @@
     document.getElementById('admin-modal-texto').textContent =
       'Apagar «' + (titulo || 'este item') + '» do acervo? Esta ação não desfaz. Se o título já entrou em um pedido, o banco pode recusar.';
     modal.hidden = false;
+    modal.removeAttribute('hidden');
   }
 
   function fecharModal() {
     exclusaoId = null;
+    if (!modal) return;
     modal.hidden = true;
+    modal.setAttribute('hidden', '');
   }
 
   async function confirmarExclusao() {
@@ -414,6 +419,9 @@
   document.getElementById('admin-modal-sim').addEventListener('click', confirmarExclusao);
   document.getElementById('admin-modal').addEventListener('click', function (ev) {
     if (ev.target === modal) fecharModal();
+  });
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') fecharModal();
   });
 
   supabaseClient.auth.onAuthStateChange(function (_ev, session) {
