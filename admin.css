@@ -352,7 +352,10 @@ table.admin-tabela tr:hover td {
   padding: 24px;
 }
 
-.admin-modal[hidden] { display: none !important; }
+.admin-modal[hidden] {
+  display: none !important;
+  pointer-events: none;
+}
 
 .admin-modal-caixa {
   width: min(420px, 100%);
