@@ -351,6 +351,60 @@
   });
   document.getElementById('form-acervo').addEventListener('submit', salvarLivro);
   document.getElementById('form-agenda').addEventListener('submit', salvarAgenda);
+
+  async function enviarCapaRepo() {
+    const arquivoEl = document.getElementById('livro-capa-arquivo');
+    const arquivo = arquivoEl && arquivoEl.files && arquivoEl.files[0];
+    if (!arquivo) {
+      statusEl('capa-status', 'Escolha um arquivo primeiro.', 'erro');
+      return;
+    }
+    statusEl('capa-status', 'Enviando ' + arquivo.name + '…', '');
+    const { data: sess } = await supabaseClient.auth.getSession();
+    const token = sess && sess.session && sess.session.access_token;
+    if (!token) {
+      statusEl('capa-status', 'Sessão expirada. Entre de novo.', 'erro');
+      return;
+    }
+    const dataUrl = await new Promise(function (resolve, reject) {
+      const reader = new FileReader();
+      reader.onload = function () { resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(arquivo);
+    });
+    try {
+      const res = await fetch('/api/upload-capa', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        },
+        body: JSON.stringify({
+          filename: arquivo.name,
+          content: dataUrl
+        })
+      });
+      const bruto = await res.text();
+      let json = {};
+      try { json = bruto ? JSON.parse(bruto) : {}; } catch (e) { json = { error: bruto.slice(0, 180) }; }
+      if (!res.ok) {
+        statusEl('capa-status', 'Erro ' + res.status + ': ' + (json.error || 'envio recusado. Confira GITHUB_TOKEN e GITHUB_REPO na Vercel.'), 'erro');
+        return;
+      }
+      document.getElementById('livro-capa').value = json.capa_url;
+      statusEl('capa-status', 'Capa gravada em ' + json.capa_url + '. Agora clique em Salvar. A foto no site aparece depois do deploy.', 'ok');
+    } catch (err) {
+      statusEl('capa-status', 'Falha de rede: ' + (err && err.message ? err.message : 'tente de novo'), 'erro');
+    }
+  }
+
+  document.addEventListener('click', function (ev) {
+    const btn = ev.target.closest('#livro-capa-enviar');
+    if (!btn) return;
+    ev.preventDefault();
+    ev.stopPropagation();
+    enviarCapaRepo();
+  });
   document.getElementById('admin-modal-nao').addEventListener('click', fecharModal);
   document.getElementById('admin-modal-sim').addEventListener('click', confirmarExclusao);
   document.getElementById('admin-modal').addEventListener('click', function (ev) {
