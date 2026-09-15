@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Ātma Vidyā</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="admin.css" />
+  <link rel="icon" type="image/png" href="img/marca/lotus_logo.png" />
+</head>
+<body class="admin-body">
+
+  <div id="admin-gate">
+    <form class="admin-caixa" id="admin-login">
+      <h1>Painel</h1>
+      <p>Ātma Vidyā — só a conta da casa.</p>
+      <label for="admin-email">E-mail</label>
+      <input type="email" id="admin-email" required autocomplete="username" />
+      <label for="admin-senha">Senha</label>
+      <input type="password" id="admin-senha" required autocomplete="current-password" />
+      <p class="admin-erro" id="admin-login-erro"></p>
+      <button type="submit" class="btn-admin">Entrar</button>
+    </form>
+  </div>
+
+  <div id="admin-negado" class="admin-escondido">
+    <div class="admin-caixa">
+      <h1>Sem acesso</h1>
+      <p>Esta conta não administra a livraria.</p>
+      <button type="button" class="btn-admin" id="admin-sair-negado">Sair</button>
+    </div>
+  </div>
+
+  <div id="admin-app" class="admin-escondido">
+    <nav class="admin-nav">
+      <a class="admin-nav-marca" href="index.html">Ātma <span>Vidyā</span></a>
+      <button type="button" data-view="resumo" class="ativo">Resumo</button>
+      <button type="button" data-view="acervo">Acervo</button>
+      <button type="button" data-view="estoque">Estoque</button>
+      <button type="button" data-view="agenda">Agenda</button>
+      <button type="button" data-view="pedidos">Pedidos</button>
+      <span class="admin-nav-espaco"></span>
+      <a class="admin-nav-link" href="index.html">Site</a>
+      <button type="button" class="admin-sair" id="admin-sair">Sair</button>
+    </nav>
+
+    <main class="admin-main">
+      <section class="admin-view" id="view-resumo">
+        <h2>Resumo</h2>
+        <p class="lead">Visão rápida do acervo e dos pedidos.</p>
+        <div class="admin-cards" id="resumo-cards"></div>
+      </section>
+
+      <section class="admin-view admin-escondido" id="view-acervo">
+        <h2>Acervo</h2>
+        <p class="lead">Inclua e edite títulos sem abrir o Supabase.</p>
+        <div class="admin-toolbar">
+          <button type="button" class="btn-admin" id="acervo-novo">Novo item</button>
+        </div>
+        <div class="admin-tabela-wrap">
+          <table class="admin-tabela" id="tabela-acervo"></table>
+        </div>
+        <form class="admin-form admin-escondido" id="form-acervo">
+          <h3 id="form-acervo-titulo">Novo item</h3>
+          <input type="hidden" id="livro-id" />
+          <div class="admin-grid">
+            <div>
+              <label>Título</label>
+              <input id="livro-titulo" required />
+            </div>
+            <div>
+              <label>Autor</label>
+              <input id="livro-autor" required />
+            </div>
+            <div>
+              <label>Categorias (vírgula: hindu, yoga, derose, desenvolvimento, cursos)</label>
+              <input id="livro-categorias" placeholder="yoga, derose" />
+            </div>
+            <div>
+              <label>Preço (R$ vazio = Em breve)</label>
+              <input id="livro-preco" type="number" min="0" step="0.01" />
+            </div>
+            <div>
+              <label>Capa (URL)</label>
+              <input id="livro-capa" placeholder="img/capas/arquivo.jpg" />
+            </div>
+            <div>
+              <label>Tipo de venda</label>
+              <select id="livro-tipo">
+                <option value="proprio">Próprio (Stripe)</option>
+                <option value="externo">Externo (link)</option>
+              </select>
+            </div>
+            <div>
+              <label>Link externo</label>
+              <input id="livro-link" />
+            </div>
+            <div>
+              <label>Estoque (unidades)</label>
+              <input id="livro-estoque" type="number" step="1" />
+            </div>
+            <div class="cheio">
+              <label>Sinopse</label>
+              <textarea id="livro-sinopse"></textarea>
+            </div>
+            <div class="cheio">
+              <label>Texto do banner</label>
+              <textarea id="livro-banner"></textarea>
+            </div>
+          </div>
+          <label class="admin-check"><input type="checkbox" id="livro-disponivel" checked /> Visível no catálogo</label>
+          <label class="admin-check"><input type="checkbox" id="livro-destaque" /> Destaque no carrossel</label>
+          <p class="admin-status" id="acervo-status"></p>
+          <div class="admin-toolbar">
+            <button type="submit" class="btn-admin">Salvar</button>
+            <button type="button" class="btn-admin btn-admin-ghost" id="acervo-cancelar">Cancelar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="admin-view admin-escondido" id="view-estoque">
+        <h2>Estoque</h2>
+        <p class="lead">Quantidade na prateleira. Vazio = não controlado.</p>
+        <div class="admin-tabela-wrap">
+          <table class="admin-tabela" id="tabela-estoque"></table>
+        </div>
+        <p class="admin-status" id="estoque-status"></p>
+      </section>
+
+      <section class="admin-view admin-escondido" id="view-agenda">
+        <h2>Agenda</h2>
+        <p class="lead">Aulas, consultas e encontros da casa.</p>
+        <form class="admin-form" id="form-agenda">
+          <h3>Novo compromisso</h3>
+          <div class="admin-grid">
+            <div>
+              <label>Título</label>
+              <input id="ag-titulo" required />
+            </div>
+            <div>
+              <label>Quando</label>
+              <input id="ag-quando" type="datetime-local" required />
+            </div>
+            <div>
+              <label>Quem</label>
+              <input id="ag-quem" />
+            </div>
+            <div class="cheio">
+              <label>Nota</label>
+              <textarea id="ag-nota"></textarea>
+            </div>
+          </div>
+          <p class="admin-status" id="agenda-status"></p>
+          <button type="submit" class="btn-admin" style="margin-top:14px">Agendar</button>
+        </form>
+        <div class="admin-tabela-wrap" style="margin-top:18px">
+          <table class="admin-tabela" id="tabela-agenda"></table>
+        </div>
+      </section>
+
+      <section class="admin-view admin-escondido" id="view-pedidos">
+        <h2>Pedidos</h2>
+        <p class="lead">Leitura. O status vem do Stripe.</p>
+        <div class="admin-tabela-wrap">
+          <table class="admin-tabela" id="tabela-pedidos"></table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="admin-modal" class="admin-modal" hidden>
+    <div class="admin-modal-caixa" role="dialog" aria-modal="true" aria-labelledby="admin-modal-titulo">
+      <h2 id="admin-modal-titulo">Excluir do acervo</h2>
+      <p id="admin-modal-texto">Esta ação apaga o registro. Não desfaz.</p>
+      <div class="admin-modal-acoes">
+        <button type="button" class="btn-admin btn-admin-ghost" id="admin-modal-nao">Cancelar</button>
+        <button type="button" class="btn-admin btn-admin-risco" id="admin-modal-sim">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
