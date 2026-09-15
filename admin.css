@@ -236,6 +236,17 @@ table.admin-tabela td {
   vertical-align: top;
 }
 
+#acervo-form-slot td {
+  background: var(--creme-card);
+  padding: 0;
+}
+
+#acervo-form-slot .admin-form {
+  margin-top: 0;
+  border: 0;
+  border-top: 1px solid var(--borda);
+}
+
 table.admin-tabela tr:hover td {
   background: var(--creme-card);
 }
