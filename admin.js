@@ -100,11 +100,46 @@
     });
   }
 
+  function devolverForm() {
+    const form = document.getElementById('form-acervo');
+    const holder = document.getElementById('acervo-form-holder');
+    const slot = document.getElementById('acervo-form-slot');
+    if (holder && form.parentElement !== holder) holder.appendChild(form);
+    if (slot) slot.remove();
+  }
+
+  function encaixarFormNaLinha(id) {
+    const form = document.getElementById('form-acervo');
+    devolverForm();
+    if (!id) {
+      document.getElementById('acervo-form-holder').appendChild(form);
+      form.classList.remove('admin-escondido');
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    const btn = document.querySelector('#tabela-acervo [data-editar="' + id + '"]');
+    const tr = btn && btn.closest('tr');
+    if (!tr) {
+      document.getElementById('acervo-form-holder').appendChild(form);
+      form.classList.remove('admin-escondido');
+      return;
+    }
+    const slot = document.createElement('tr');
+    slot.id = 'acervo-form-slot';
+    const td = document.createElement('td');
+    td.colSpan = 5;
+    td.appendChild(form);
+    slot.appendChild(td);
+    tr.parentNode.insertBefore(slot, tr.nextSibling);
+    form.classList.remove('admin-escondido');
+    form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   async function abrirLivro(id) {
     const form = document.getElementById('form-acervo');
-    form.classList.remove('admin-escondido');
     document.getElementById('form-acervo-titulo').textContent = id ? 'Editar item' : 'Novo item';
     statusEl('acervo-status', '');
+    encaixarFormNaLinha(id);
     if (!id) {
       form.reset();
       document.getElementById('livro-id').value = '';
@@ -163,6 +198,7 @@
     }
     statusEl('acervo-status', 'Salvo.', 'ok');
     document.getElementById('form-acervo').classList.add('admin-escondido');
+    devolverForm();
     carregarAcervo();
   }
 
@@ -192,6 +228,7 @@
     }
     statusEl('acervo-status', 'Item excluído.', 'ok');
     document.getElementById('form-acervo').classList.add('admin-escondido');
+    devolverForm();
     carregarAcervo();
   }
 
@@ -310,6 +347,7 @@
   document.getElementById('acervo-novo').addEventListener('click', function () { abrirLivro(''); });
   document.getElementById('acervo-cancelar').addEventListener('click', function () {
     document.getElementById('form-acervo').classList.add('admin-escondido');
+    devolverForm();
   });
   document.getElementById('form-acervo').addEventListener('submit', salvarLivro);
   document.getElementById('form-agenda').addEventListener('submit', salvarAgenda);
