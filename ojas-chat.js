@@ -131,7 +131,12 @@
 
     const root = el(`
       <div id="ojas-root">
-        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas"><img src="img/ojas-fab-dhyana.png" alt="" width="56" height="56" /></button>
+        <a id="ojas-catalogo-fab" href="index.html#catalogo" aria-label="Ir ao catálogo">
+          <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+            <path fill="currentColor" d="M6 3h9a3 3 0 0 1 3 3v14.2a1 1 0 0 1-1.5.85L12 18.2l-4.5 2.85A1 1 0 0 1 6 20.2V3zm2 2v13.1l4-2.53 4 2.53V6a1 1 0 0 0-1-1H8z"/>
+          </svg>
+        </a>
+        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas"><img src="img/ojas-fab-dhyana.png" alt="" width="48" height="48" /></button>
         <div id="ojas-painel" hidden>
           <div class="ojas-cab">
             <strong>Ôjas</strong>
