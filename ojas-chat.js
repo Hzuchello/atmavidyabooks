@@ -136,7 +136,7 @@
             <path fill="currentColor" d="M6 3h9a3 3 0 0 1 3 3v14.2a1 1 0 0 1-1.5.85L12 18.2l-4.5 2.85A1 1 0 0 1 6 20.2V3zm2 2v13.1l4-2.53 4 2.53V6a1 1 0 0 0-1-1H8z"/>
           </svg>
         </a>
-        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas"><img src="img/ojas-fab-dhyana.png" alt="" width="48" height="48" /></button>
+        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas"><img src="img/ojas-fab-dhyana.png" alt="" width="40" height="40" /><span>Livreiro virtual</span></button>
         <div id="ojas-painel" hidden>
           <div class="ojas-cab">
             <strong>Ôjas</strong>
