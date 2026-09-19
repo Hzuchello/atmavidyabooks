@@ -131,7 +131,7 @@
 
     const root = el(`
       <div id="ojas-root">
-        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas">Ôjas</button>
+        <button type="button" id="ojas-fab" aria-label="Falar com Ôjas"><img src="img/ojas-fab-dhyana.png" alt="" width="56" height="56" /></button>
         <div id="ojas-painel" hidden>
           <div class="ojas-cab">
             <strong>Ôjas</strong>
