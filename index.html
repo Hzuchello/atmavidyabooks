@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Átma Vidyá Books</title>
+<meta name="description" content="Átma Vidyá Books — livraria dedicada ao Yôga, Sámkhya e Vêdánta. Edições comentadas, textos clássicos e conteúdo para o buscador sincero.">
+<link rel="icon" href="favicon.ico?v=4" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="img/favicon-32.png?v=4">
+<link rel="icon" type="image/png" sizes="48x48" href="img/favicon-48.png?v=4">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Ir ao conteúdo</a>
+
+<header class="site-nav">
+  <div class="nav-row">
+    <a class="brand" href="#home" onclick="navigate('home');closeMenu();">
+      <img src="img/ashtanga-yantra-gold.png?v=4" alt="Átma Vidyá Books">
+      <span class="brand-text">Átma Vidyá Books<small>YÔGA · SÁMKHYA · FILOSOFIA HINDU</small></span>
+    </a>
+    <nav class="nav-links" id="navLinks">
+      <a href="#home" data-nav="home" onclick="navigate('home');closeMenu();">Início</a>
+      <a href="#catalogo" data-nav="catalogo" onclick="navigate('catalogo');closeMenu();">Catálogo</a>
+      <a href="#sankhya" data-nav="sankhya" onclick="navigate('sankhya');closeMenu();">Sámkhya</a>
+      <a href="#membros" data-nav="membros" onclick="navigate('membros');closeMenu();">Membros</a>
+      <a href="#contato" data-nav="contato" onclick="openContact();return false;">Contato</a>
+    </nav>
+    <div class="nav-actions">
+      <span class="greeting" id="greetingText" style="display:none;"></span>
+      <a class="icon-btn" id="loginIcon" href="#entrar" onclick="navigate('entrar');closeMenu();" title="Entrar" aria-label="Entrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>
+      </a>
+      <a class="icon-btn" id="logoutIcon" href="#home" onclick="doLogout();return false;" title="Sair" aria-label="Sair" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 17l5-5-5-5M20 12H9M12 19H6a2 2 0 01-2-2V7a2 2 0 012-2h6"/></svg>
+      </a>
+      <button class="icon-btn" type="button" onclick="toggleCart(true)" title="Carrinho" aria-label="Abrir carrinho">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="9" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M1 1h4l2.6 13.4a2 2 0 002 1.6h9.8a2 2 0 002-1.6L23 6H6"/></svg>
+        <span class="badge" id="cartBadge" style="display:none;">0</span>
+      </button>
+      <button class="hamburger" type="button" onclick="toggleMenu()" aria-label="Abrir menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<div class="overlay" id="overlay" onclick="onOverlayClick()"></div>
+
+<main id="main">
+
+<section class="view active" id="view-home" data-view="home">
+  <div class="hero">
+    <div class="container hero-grid">
+      <div class="hero-emblem">
+        <img src="img/emblem.png?v=3" alt="Mandala Átma Vidyá — símbolo da livraria">
+      </div>
+      <div class="hero-copy">
+        <span class="eyebrow">Para o buscador sincero</span>
+        <h1>Átma Vidyá</h1>
+        <p class="lede">Cada livro deste catálogo foi escolhido, comentado ou traduzido para servir a esse único propósito: aproximar o leitor de sua própria natureza.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" type="button" onclick="navigate('catalogo')">Explorar o catálogo</button>
+          <button class="btn btn-outline" type="button" onclick="navigate('sankhya')">Conhecer o Sámkhya</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="intro-strip container">
+    <div class="rule"></div>
+    <h1>"A verdade é uma, os sábios a chamam por muitos nomes."</h1>
+    <p>— Rig Véda, 1.164.46</p>
+  </div>
+
+  <div class="featured container">
+    <div class="section-head">
+      <div>
+        <h2>Destaques</h2>
+
+      </div>
+      <a href="#catalogo" onclick="navigate('catalogo')">Ver catálogo completo →</a>
+    </div>
+    <div class="book-grid" id="featuredGrid"></div>
+  </div>
+
+  <div class="about-grid container">
+    <div class="about-text">
+      <h3>Sobre a Átma Vidyá Books</h3>
+      <h2>Uma curadoria, não um catálogo infinito</h2>
+      <p>Somos uma livraria pequena e intencional. Selecionamos aquilo que consideramos essencial para quem estuda com seriedade — do primeiro contato com o Sámkhya à leitura comentada dos Yôga Sútras.</p>
+      <p>Parte do catálogo é de tradução realizada com IA; parte é curadoria de edições clássicas. Em ambos os casos, o critério é o mesmo: fidelidade ao texto original e clareza para o leitor contemporâneo.</p>
+    </div>
+    <div class="visual">
+      <img src="img/emblem.png?v=3" alt="Emblema da livraria">
+    </div>
+  </div>
+
+  <div class="newsletter">
+    <div class="container row">
+      <div>
+        <h3>Newsletter</h3>
+        <p>Avisos de lançamento e novidades.</p>
+      </div>
+      <form onsubmit="submitNewsletter(event)">
+        <input type="email" required placeholder="seu@email.com" aria-label="E-mail para newsletter">
+        <button class="btn" type="submit">Inscrever</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-catalogo" data-view="catalogo">
+  <div class="page-hero">
+    <div class="container">
+      <div class="crumb"><a href="#home" onclick="navigate('home')">Início</a> / Catálogo</div>
+      <h1>Catálogo</h1>
+      <p>Textos clássicos e edições comentadas.</p>
+    </div>
+  </div>
+  <div class="catalog container">
+    <div class="catalog-tools">
+      <div class="chip-row" id="chipRow"></div>
+      <div class="search-wrap">
+        <input id="catalogSearch" type="search" placeholder="Buscar título, autor ou tema" aria-label="Buscar no catálogo" oninput="onSearchInput(event)" onkeydown="if(event.key==='Enter')onSearchCommit()">
+      </div>
+    </div>
+    <div class="book-grid" id="bookGrid"></div>
+    <div class="catalog-empty" id="catalogEmpty" hidden>
+      <p>Nenhum título corresponde à busca.</p>
+      <button class="btn btn-dark-outline" type="button" onclick="state.searchQuery=''; state.activeFilter=''; navigate('catalogo',{filter:'',q:''})">Limpar filtros</button>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-sankhya" data-view="sankhya">
+  <div class="page-hero">
+    <div class="container">
+      <div class="crumb"><a href="#home" onclick="navigate('home')">Início</a> / Sámkhya</div>
+      <h1>Sámkhya — o caminho do discernimento</h1>
+      <p>A mais antiga das seis escolas clássicas da filosofia indiana, e a base conceitual sobre a qual o Yôga de Pátañjali constrói sua prática.</p>
+    </div>
+  </div>
+  <div class="article-wrap container">
+    <div class="article-grid">
+      <div class="article-body">
+        <h2>Dois princípios, um universo</h2>
+        <p>O Sámkhya propõe uma leitura dualista da existência: de um lado, Púrusha — a consciência pura, testemunha imóvel, aquilo que em cada ser simplesmente observa; de outro, Prákriti — a natureza primordial, matéria e movimento, a causa de tudo o que se manifesta, se transforma e se dissolve.</p>
+        <p>A confusão entre esses dois princípios — tomar os movimentos de Prákriti (pensamentos, emoções, sensações) como se fossem a própria identidade de Púrusha — é, para o Sámkhya, a raiz do sofrimento. O discernimento entre os dois (vivêka) é o caminho da libertação.</p>
+
+        <h2>Os três gúnas</h2>
+        <p>Prákriti se expressa por meio de três qualidades ou tendências fundamentais, os gúnas, presentes em graus variados em tudo o que existe:</p>
+        <p><b>Sátwa</b> — clareza, leveza, equilíbrio; <b>Rájas</b> — atividade, movimento, desejo; <b>Támas</b> — inércia, densidade, obscuridade. Nenhum estado da natureza — um pensamento, um alimento, uma emoção — escapa a essa combinação. A prática, no Sámkhya como no Yôga, é o cultivo progressivo de Sátwa.</p>
+
+        <p class="pull">Conhecer não é acumular informação sobre o mundo — é discernir, com precisão cada vez maior, o que observa daquilo que é observado.</p>
+
+        <h2>A evolução dos tattwas</h2>
+        <p>A partir do contato entre Púrusha e Prákriti, a tradição descreve uma sequência de vinte e cinco princípios (tattwas) que evoluem da matéria mais sutil à mais densa: de Prákriti não manifesta surge Mahat (a inteligência cósmica), depois ahankára (o princípio de individuação), e deste, os órgãos dos sentidos, os órgãos de ação, a mente (manas), os cinco tanmátras (essências sutis) e os cinco mahábhútas (elementos densos) — terra, água, fogo, ar e éter.</p>
+        <p>Esse mapa não é apenas cosmológico: é também um mapa da experiência interna, útil para reconhecer, na prática de introspecção, em que nível — sensação, emoção, pensamento, identidade — uma perturbação está de fato ocorrendo.</p>
+
+        <h2>Sámkhya e Yôga</h2>
+        <p>Pátañjali não inventa o Sámkhya; ele o aplica. Os Yôga Sútras pressupõem o vocabulário e a cosmologia do Sámkhya clássico e acrescentam um elemento próprio: a técnica sistemática — o método — para realizar, na experiência direta, o discernimento que o Sámkhya apenas descreve. Por isso o estudo de um ilumina o do outro.</p>
+
+        <button class="btn btn-primary" type="button" onclick="navigateWithFilter('Sámkhya')" style="margin-top:10px;">Ver livros sobre Sámkhya</button>
+      </div>
+
+      <aside class="side-box">
+        <h4>A evolução dos tattwas</h4>
+        <div class="diagram-wrap">
+          <svg class="tattva-diagram" viewBox="0 0 260 300" xmlns="http://www.w3.org/2000/svg">
+            <line class="link" x1="130" y1="38" x2="130" y2="70"/>
+            <line class="link" x1="130" y1="98" x2="130" y2="130"/>
+            <line class="link" x1="130" y1="158" x2="60" y2="195"/>
+            <line class="link" x1="130" y1="158" x2="130" y2="195"/>
+            <line class="link" x1="130" y1="158" x2="200" y2="195"/>
+            <line class="link" x1="60" y1="215" x2="60" y2="250"/>
+            <line class="link" x1="130" y1="215" x2="130" y2="250"/>
+            <line class="link" x1="200" y1="215" x2="200" y2="250"/>
+            <rect class="node accent" x="70" y="10" width="120" height="28" rx="2"/>
+            <text x="130" y="28" text-anchor="middle">Púrusha + Prákriti</text>
+            <rect class="node" x="80" y="70" width="100" height="28" rx="2"/>
+            <text x="130" y="88" text-anchor="middle">Mahat</text>
+            <rect class="node" x="70" y="130" width="120" height="28" rx="2"/>
+            <text x="130" y="148" text-anchor="middle">ahankára</text>
+            <rect class="node" x="15" y="195" width="90" height="26" rx="2"/>
+            <text x="60" y="212" text-anchor="middle" font-size="8">indriyas</text>
+            <rect class="node" x="85" y="195" width="90" height="26" rx="2"/>
+            <text x="130" y="212" text-anchor="middle" font-size="8">tanmátras</text>
+            <rect class="node" x="155" y="195" width="90" height="26" rx="2"/>
+            <text x="200" y="212" text-anchor="middle" font-size="8">órgãos de ação</text>
+            <rect class="node" x="15" y="250" width="90" height="26" rx="2"/>
+            <text x="60" y="267" text-anchor="middle" font-size="8">percepção</text>
+            <rect class="node" x="85" y="250" width="90" height="26" rx="2"/>
+            <text x="130" y="267" text-anchor="middle" font-size="8">mahábhútas</text>
+            <rect class="node" x="155" y="250" width="90" height="26" rx="2"/>
+            <text x="200" y="267" text-anchor="middle" font-size="8">ação</text>
+          </svg>
+        </div>
+        <p>Representação simplificada da evolução dos princípios (tattwas) segundo a cosmologia Sámkhya, do mais sutil ao mais denso.</p>
+        <button class="btn btn-dark-outline btn-sm" type="button" onclick="navigate('catalogo')">Ver catálogo completo</button>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-livro" data-view="livro">
+  <div class="page-hero slim">
+    <div class="container">
+      <div class="crumb">
+        <a href="#home" onclick="navigate('home')">Início</a> /
+        <a href="#catalogo" onclick="navigate('catalogo')">Catálogo</a> /
+        <span id="bookCrumb">Livro</span>
+      </div>
+      <h1 class="visually-hidden">Ficha do livro</h1>
+    </div>
+  </div>
+  <div class="detail-wrap container">
+    <div class="detail-grid" id="bookDetailGrid"></div>
+    <div class="related" id="bookRelated" hidden></div>
+  </div>
+</section>
+
+<section class="view" id="view-entrar" data-view="entrar">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <img class="mark" src="img/mark.png?v=3" alt="">
+      <h2>Entrar</h2>
+      <p class="sub">Acesse sua conta Átma Vidyá Books</p>
+      <form onsubmit="submitLogin(event)">
+        <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" required autocomplete="username"></div>
+        <div class="field"><label for="loginSenha">Senha</label><input id="loginSenha" type="password" required minlength="4" autocomplete="current-password"></div>
+        <button class="btn btn-primary" type="submit">Entrar</button>
+      </form>
+      <p class="auth-switch">Ainda não tem conta? <a href="#criar-conta" onclick="navigate('criar-conta')">Criar conta</a></p>
+      <p class="auth-note">Ambiente de demonstração — a autenticação real será conectada ao banco de dados em breve. Qualquer e-mail e senha válidos simulam um acesso, guardado neste navegador.</p>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-criar-conta" data-view="criar-conta">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <img class="mark" src="img/mark.png?v=3" alt="">
+      <h2>Criar conta</h2>
+      <p class="sub">Leva menos de um minuto</p>
+      <form onsubmit="submitSignup(event)">
+        <div class="field"><label for="suNome">Nome</label><input id="suNome" type="text" required autocomplete="name"></div>
+        <div class="field"><label for="suEmail">E-mail</label><input id="suEmail" type="email" required autocomplete="email"></div>
+        <div class="field"><label for="suSenha">Senha</label><input id="suSenha" type="password" required minlength="4" autocomplete="new-password"></div>
+        <div class="field"><label for="suSenha2">Confirmar senha</label><input id="suSenha2" type="password" required minlength="4" autocomplete="new-password"></div>
+        <button class="btn btn-primary" type="submit">Criar conta</button>
+      </form>
+      <p class="auth-switch">Já tem conta? <a href="#entrar" onclick="navigate('entrar')">Entrar</a></p>
+      <p class="auth-note">Ambiente de demonstração — os dados ficam apenas no armazenamento local deste navegador.</p>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-membros" data-view="membros">
+  <div class="page-hero">
+    <div class="container">
+      <div class="crumb"><a href="#home" onclick="navigate('home')">Início</a> / Membros</div>
+      <h1>Área de membros</h1>
+      <p>Comentários exclusivos, aulas gravadas e conteúdo de aprofundamento para quem estuda com regularidade.</p>
+    </div>
+  </div>
+  <div class="members-wrap container" id="membersContent"></div>
+</section>
+
+<section class="view" id="view-privacidade" data-view="privacidade">
+  <div class="page-hero">
+    <div class="container">
+      <div class="crumb"><a href="#home" onclick="navigate('home')">Início</a> / Privacidade</div>
+      <h1>Política de privacidade</h1>
+      <p>Como a Átma Vidyá Books trata os dados de leitores e membros, em conformidade com a LGPD.</p>
+    </div>
+  </div>
+  <div class="legal-wrap container">
+    <div class="legal-body">
+      <p class="updated">Última atualização: 21 de setembro de 2026.</p>
+
+      <h2>1. Quem somos</h2>
+      <p>Átma Vidyá Books é uma livraria dedicada a edições de Yôga, Sámkhya, Vêdánta e desenvolvimento integral, com sede em Curitiba, PR. Esta política descreve como coletamos e usamos dados pessoais neste site.</p>
+
+      <h2>2. Quais dados coletamos</h2>
+      <p>Podemos tratar nome, e-mail, senha (armazenada de forma segura quando a autenticação real estiver ativa), dados de pedido e endereço de entrega, além de registros técnicos de navegação necessários ao funcionamento do site.</p>
+
+      <h2>3. Para que usamos os dados</h2>
+      <ul>
+        <li>Criar e manter sua conta de membro;</li>
+        <li>Processar pedidos, pagamentos e envios;</li>
+        <li>Enviar comunicações de novidades e lançamentos, apenas para quem optar por recebê-las;</li>
+        <li>Cumprir obrigações legais e fiscais relacionadas à venda de produtos.</li>
+      </ul>
+
+      <h2>4. Base legal do tratamento</h2>
+      <p>O tratamento se baseia, conforme o caso, na execução de contrato (pedidos e acesso à conta), no consentimento (newsletter) e no cumprimento de obrigação legal (dados fiscais de venda).</p>
+
+      <h2>5. Compartilhamento de dados</h2>
+      <p>Seus dados podem ser compartilhados com operadores estritamente necessários à operação do site, como provedores de pagamento (Stripe), infraestrutura e automação de atendimento (n8n) e serviços de hospedagem. Não vendemos dados pessoais a terceiros.</p>
+
+      <h2>6. Cookies</h2>
+      <p>Utilizamos cookies e armazenamento local do navegador para manter você logado, lembrar o conteúdo do carrinho e melhorar a navegação. Você pode gerenciar cookies nas configurações do navegador.</p>
+
+      <h2>7. Seus direitos como titular</h2>
+      <p>Nos termos do artigo 18 da LGPD, você pode solicitar confirmação da existência de tratamento, acesso, correção, anonimização ou eliminação, portabilidade, informações sobre compartilhamento e revogação do consentimento.</p>
+
+      <h2>8. Retenção e segurança</h2>
+      <p>Mantemos seus dados pelo tempo necessário para cumprir as finalidades descritas ou por prazo exigido por lei. Adotamos medidas técnicas e organizacionais razoáveis contra acesso não autorizado, perda ou alteração.</p>
+
+      <h2>9. Contato</h2>
+      <p>Para exercer seus direitos: <b>contato@atmavidyabooks.com.br</b>.</p>
+
+      <h2>10. Alterações desta política</h2>
+      <p>Esta política pode ser atualizada periodicamente. A data da última atualização estará sempre indicada no topo desta página.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <img src="img/nataraja.png" alt="Shiva Natarája">
+        <div>
+          <strong>Átma Vidyá Books</strong>
+          <p>Curadoria de Yôga, Sámkhya e Filosofia Hindu.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Átma Vidyá Books. Todos os direitos reservados.</span>
+      <span>Curitiba, PR — Brasil</span>
+      <a href="#privacidade" onclick="navigate('privacidade')">Privacidade</a>
+
+    </div>
+  </div>
+</footer>
+
+<aside id="cart-drawer" aria-label="Carrinho">
+  <div class="cart-head">
+    <h3>Carrinho</h3>
+    <button type="button" onclick="toggleCart(false)" aria-label="Fechar carrinho">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-foot" id="cartFoot" hidden>
+    <div class="total"><span>Total</span><b id="cartTotal">R$ 0,00</b></div>
+    <button class="btn btn-primary" type="button" onclick="checkoutDemo()">Finalizar compra</button>
+    <p class="cart-note">Pagamento via Stripe será ativado em breve. Esta etapa é uma simulação.</p>
+  </div>
+</aside>
+
+<div id="contact-modal" class="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contactTitle" hidden onclick="if(event.target===this)closeContact()">
+  <div class="contact-card">
+    <button class="contact-close" type="button" onclick="closeContact()" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+    <img class="mark" src="img/ashtanga-yantra-gold.png?v=4" alt="">
+    <h2 id="contactTitle">Contato</h2>
+    <form id="contactForm" onsubmit="submitContact(event)">
+      <div class="field"><label for="ctNome">Nome</label><input id="ctNome" name="nome" type="text" required autocomplete="name"></div>
+      <div class="field"><label for="ctWhats">WhatsApp</label><input id="ctWhats" name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" placeholder="41 99999-0000"></div>
+      <div class="field"><label for="ctEmail">E-mail</label><input id="ctEmail" name="email" type="email" autocomplete="email"></div>
+      <div class="field"><label for="ctMotivo">Motivo</label>
+        <textarea id="ctMotivo" name="motivo" required rows="5" placeholder="Como podemos ajudar?"></textarea>
+      </div>
+      <p class="contact-hint" id="contactHint" hidden>Informe WhatsApp ou e-mail.</p>
+      <button class="btn btn-primary" type="submit">Enviar</button>
+    </form>
+    <p class="contact-ok" id="contactOk" hidden>Sua mensagem foi encaminhada, retornaremos o mais breve possível. Obrigado!</p>
+  </div>
+</div>
+
+<div id="toast">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<button id="ojas-toggle" type="button" onclick="toggleChat()" aria-label="Abrir Ôjas Bot">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  <span class="dot" id="chatDot" style="display:none;"></span>
+</button>
+
+<div id="ojas-panel">
+  <div class="ojas-head">
+    <img src="img/ojas_bot.png?v=3" alt="">
+    <div class="who"><b>Ôjas Bot</b><span id="ojasStatus">Atendimento Átma Vidyá Books</span></div>
+    <button type="button" onclick="toggleChat(false)" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="ojas-body" id="ojasBody"></div>
+  <div class="chip-set" id="ojasChips"></div>
+  <form class="ojas-input" onsubmit="return sendFreeText(event)">
+    <input type="text" id="ojasInput" placeholder="Escreva sua mensagem..." aria-label="Mensagem para o Ôjas Bot">
+    <button type="submit" aria-label="Enviar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+    </button>
+  </form>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
