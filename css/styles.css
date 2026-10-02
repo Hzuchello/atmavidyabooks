@@ -131,7 +131,10 @@ nav.nav-links a.active::after{
 /* ---- HERO ---- */
 .hero{
   background:radial-gradient(ellipse 90% 70% at 22% 30%, var(--navy-soft), var(--navy-deep) 70%);
-  padding:calc(120px + env(safe-area-inset-top,0px)) 0 72px;
+  padding:calc(168px + env(safe-area-inset-top,0px)) 0 128px;
+  min-height:min(88vh, 820px);
+  display:flex;
+  align-items:center;
   position:relative;
 }
 .hero::before{
@@ -149,7 +152,7 @@ nav.nav-links a.active::after{
   position:relative; display:flex; justify-content:center; align-items:center;
 }
 .hero-emblem img{
-  position:relative; width:min(100%,280px); height:auto;
+  position:relative; width:min(100%,340px); height:auto;
   background:transparent;
   mix-blend-mode:normal;
 }
@@ -167,11 +170,12 @@ nav.nav-links a.active::after{
 .hero-actions{display:flex; gap:16px; margin-top:34px; flex-wrap:wrap;}
 
 @media (max-width:860px){
+  .hero{padding:calc(132px + env(safe-area-inset-top,0px)) 0 96px; min-height:0;}
   .hero-grid{grid-template-columns:1fr; text-align:center;}
   .hero-copy h1{margin-left:auto;margin-right:auto; max-width:none;}
   .hero-copy p.lede{margin-left:auto;margin-right:auto;}
   .hero-actions{justify-content:center;}
-  .hero-emblem img{width:220px;}
+  .hero-emblem img{width:min(72vw, 260px);}
 }
 
 /* ---- INTRO STRIP ---- */
