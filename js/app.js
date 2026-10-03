@@ -150,7 +150,7 @@ const BOOKS = [
   }
 ];
 
-const CATEGORIES = ["Yôga", "Sámkhya", "Filosofia Hindu"];
+const CATEGORIES = ["Todos", "DeRose", "Filosofia Hindu", "Psicologia", "Yôga", "Sámkhya"];
 
 const VALID_VIEWS = [
   "home",
@@ -327,7 +327,7 @@ function route() {
     if (param && CATEGORIES.includes(param)) state.activeFilter = param;
     else if (query.get("cat") && CATEGORIES.includes(query.get("cat"))) {
       state.activeFilter = query.get("cat");
-    } else if (!param) {
+    } else if (!param || param === "Todos") {
       state.activeFilter = "";
     }
     if (query.get("q") !== null) state.searchQuery = query.get("q") || "";
@@ -348,19 +348,34 @@ function route() {
 window.addEventListener("hashchange", route);
 
 /* ================= CATALOG ================= */
+function fold(str) {
+  return String(str || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+function bookTags(b) {
+  return (b.tags || []).map(fold);
+}
+function matchesFilter(b, filter) {
+  if (!filter || filter === "Todos") return true;
+  const tags = bookTags(b);
+  if (filter === "DeRose") return tags.includes("derose");
+  if (filter === "Psicologia") return tags.includes("desenvolvimento") || tags.includes("psicologia");
+  if (filter === "Yôga") return b.cat === "Yôga" || tags.includes("yoga");
+  if (filter === "Sámkhya") return b.cat === "Sámkhya" || tags.includes("samkhya");
+  if (filter === "Filosofia Hindu") return b.cat === "Filosofia Hindu" || tags.includes("hindu");
+  return b.cat === filter;
+}
 function filteredBooks() {
   let items = BOOKS.filter((b) => !b.external);
-  if (state.activeFilter) {
-    items = items.filter((b) =>
-      state.activeFilter === "Filosofia Hindu"
-        ? b.cat === "Filosofia Hindu" || b.cat === "Vêdánta" || b.cat === "Desenvolvimento Integral"
-        : b.cat === state.activeFilter
-    );
+  if (state.activeFilter && state.activeFilter !== "Todos") {
+    items = items.filter((b) => matchesFilter(b, state.activeFilter));
   }
-  const q = (state.searchQuery || "").trim().toLowerCase();
+  const q = fold(state.searchQuery || "").trim();
   if (q) {
     items = items.filter((b) =>
-      (b.title + " " + b.author + " " + b.cat + " " + b.synopsis.join(" ")).toLowerCase().includes(q)
+      fold(b.title + " " + b.author + " " + b.cat + " " + (b.tags || []).join(" ") + " " + (b.synopsis || []).join(" ")).includes(q)
     );
   }
   return items;
@@ -371,12 +386,12 @@ function renderChips() {
   if (!row) return;
   row.innerHTML = CATEGORIES.map(
     (c) =>
-      `<button class="chip ${c === state.activeFilter ? "active" : ""}" type="button" onclick="setFilter('${c}')">${c}</button>`
+      `<button class="chip ${(!state.activeFilter && c === "Todos") || c === state.activeFilter ? "active" : ""}" type="button" onclick="setFilter('${c}')">${c}</button>`
   ).join("");
 }
 
 function setFilter(cat) {
-  state.activeFilter = state.activeFilter === cat ? "" : cat;
+  state.activeFilter = cat === "Todos" || state.activeFilter === cat ? "" : cat;
   navigate("catalogo", { filter: state.activeFilter, q: state.searchQuery });
 }
 
@@ -974,6 +989,7 @@ function mapLivro(row) {
     featured: !!row.destaque,
     external: row.tipo_venda === "externo",
     link: row.link_externo || "",
+    tags: row.categorias || [],
     membersHook: false,
     synopsis: parts,
     pages: "—",
