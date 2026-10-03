@@ -453,25 +453,19 @@ function renderFeatured() {
 }
 function renderLinks() {
   const grid = document.getElementById("linksGrid");
+  const wrap = document.getElementById("sourceLinks");
   if (!grid) return;
-  const items = BOOKS.filter((b) => b.external && b.link);
-  grid.innerHTML = items.map(linkCardHTML).join("");
-  const band = grid.closest(".links-band");
-  if (band) band.hidden = !items.length;
+  const items = BOOKS.filter((b) => b.external && b.link && !/kárik|karik/i.test(b.title));
+  grid.innerHTML = items.map(sourceLinkHTML).join("");
+  if (wrap) wrap.hidden = !items.length;
 }
-function linkCardHTML(b) {
-  const href = escapeHtml(b.link);
+function sourceLinkHTML(b) {
+  const desc = (b.synopsis && b.synopsis[0]) || "Fonte aberta para estudo.";
   return `
-    <a class="link-card" href="${href}" target="_blank" rel="noopener noreferrer">
-      <div class="book-cover">
-        <div class="cover-frame">${coverInner(b, b.title)}</div>
-      </div>
-      <div class="link-info">
-        <div class="title">${escapeHtml(b.title)}</div>
-        <div class="author">${escapeHtml(b.author)}</div>
-        <span class="open">Abrir</span>
-      </div>
-    </a>`;
+    <div class="source-item">
+      <a href="${escapeHtml(b.link)}" target="_blank" rel="noopener noreferrer">${escapeHtml(b.title)}</a>
+      <p>${escapeHtml(desc)}</p>
+    </div>`;
 }
 
 function renderBookDetail(id) {
