@@ -187,7 +187,14 @@ function fmtPrice(v) {
   return "R$ " + v.toFixed(2).replace(".", ",");
 }
 function bookById(id) {
-  return BOOKS.find((b) => b.id === Number(id));
+  return BOOKS.find((b) => String(b.id) === String(id));
+}
+function jsId(id) {
+  return "'" + String(id).replace(/'/g, "") + "'";
+}
+function displayPrice(b) {
+  if (b && b.priceLabel) return b.priceLabel;
+  return fmtPrice(Number(b.price) || 0);
 }
 function coverClass(cat) {
   return COVER_CLASS[cat] || "";
@@ -311,9 +318,8 @@ function route() {
   const { view, param, query } = parseHash();
 
   if (view === "livro") {
-    const id = parseInt(param, 10);
     showView("livro");
-    renderBookDetail(id);
+    renderBookDetail(param);
     return;
   }
 
@@ -383,18 +389,24 @@ function onSearchCommit() {
   navigate("catalogo", { filter: state.activeFilter, q: state.searchQuery });
 }
 
+function coverInner(b, label) {
+  if (b.cover) {
+    return `<img class="cover-photo" src="${escapeHtml(b.cover)}" alt="${escapeHtml(b.title)}">`;
+  }
+  return `<div class="glyph"><span class="big">${b.big || "ॐ"}</span>${escapeHtml(label)}</div>`;
+}
 function bookCardHTML(b) {
   return `
-    <article class="book-card" role="link" tabindex="0" onclick="openBook(${b.id})" onkeydown="if(event.key==='Enter')openBook(${b.id})">
+    <article class="book-card" role="link" tabindex="0" onclick="openBook(${jsId(b.id)})" onkeydown="if(event.key==='Enter')openBook(${jsId(b.id)})">
       <div class="book-cover ${coverClass(b.cat)}">
-        <div class="glyph"><span class="big">${b.big}</span>${b.cat}</div>
+        ${coverInner(b, b.cat)}
       </div>
       <div class="book-info">
         <div class="title">${escapeHtml(b.title)}</div>
         <div class="author">${escapeHtml(b.author)}</div>
         <div class="row">
-          <span class="price">${fmtPrice(b.price)}</span>
-          <button class="add-btn" type="button" onclick="event.stopPropagation(); addToCart(${b.id});" aria-label="Adicionar ${escapeHtml(b.title)} ao carrinho">
+          <span class="price">${displayPrice(b)}</span>
+          <button class="add-btn" type="button" onclick="event.stopPropagation(); addToCart(${jsId(b.id)});" aria-label="Adicionar ${escapeHtml(b.title)} ao carrinho">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>
           </button>
         </div>
@@ -454,20 +466,20 @@ function renderBookDetail(id) {
 
   mount.innerHTML = `
     <div class="detail-cover ${coverClass(b.cat)}">
-      <div class="glyph"><span class="big">${b.big}</span>${escapeHtml(b.title.split(" — ")[0])}</div>
+      ${coverInner(b, b.title.split(" — ")[0])}
     </div>
     <div class="detail-info">
       <span class="category-tag">${escapeHtml(b.cat)}</span>
       <h1>${escapeHtml(b.title)}</h1>
       <div class="author">${escapeHtml(b.author)}</div>
       <div class="price-row">
-        <span class="price">${fmtPrice(b.price)}</span>
+        <span class="price">${displayPrice(b)}</span>
         <div class="qty-stepper">
           <button type="button" onclick="stepQty(-1)" aria-label="Diminuir">−</button>
           <span id="qtyDisplay">1</span>
           <button type="button" onclick="stepQty(1)" aria-label="Aumentar">+</button>
         </div>
-        <button class="btn btn-red" type="button" onclick="addToCart(${b.id}, true)">Adicionar ao carrinho</button>
+        <button class="btn btn-red" type="button" onclick="addToCart(${jsId(b.id)}, true)">Adicionar ao carrinho</button>
       </div>
       <div class="synopsis">${b.synopsis.map((p) => `<p>${p}</p>`).join("")}</div>
       <div class="meta-list">
@@ -590,14 +602,14 @@ function renderCartDrawer() {
           <div class="a">${escapeHtml(b.author)}</div>
           <div class="controls">
             <div class="qty-stepper">
-              <button type="button" onclick="setCartQty(${b.id}, ${qty - 1})" aria-label="Diminuir">−</button>
+              <button type="button" onclick="setCartQty(${jsId(b.id)}, ${qty - 1})" aria-label="Diminuir">−</button>
               <span>${qty}</span>
-              <button type="button" onclick="setCartQty(${b.id}, ${qty + 1})" aria-label="Aumentar">+</button>
+              <button type="button" onclick="setCartQty(${jsId(b.id)}, ${qty + 1})" aria-label="Aumentar">+</button>
             </div>
-            <button class="remove" type="button" onclick="removeFromCart(${b.id})">remover</button>
+            <button class="remove" type="button" onclick="removeFromCart(${jsId(b.id)})">remover</button>
           </div>
         </div>
-        <div class="sub">${fmtPrice(b.price * qty)}</div>
+        <div class="sub">${b.priceLabel ? b.priceLabel : fmtPrice(b.price * qty)}</div>
       </div>`;
     })
     .join("");
@@ -638,8 +650,8 @@ function applyAuthUI() {
 function submitLogin(e) {
   e.preventDefault();
   const email = document.getElementById("loginEmail").value.trim();
-  const name = email.split("@")[0] || "Leitor";
-  doLogin(name, email);
+  const senha = document.getElementById("loginSenha").value;
+  signInSupabase(email, senha);
 }
 
 function submitSignup(e) {
@@ -652,7 +664,7 @@ function submitSignup(e) {
     toast("As senhas não coincidem.");
     return;
   }
-  doLogin(nome.split(" ")[0], email);
+  signUpSupabase(nome, email, s1);
 }
 
 function doLogin(name, email) {
@@ -667,6 +679,7 @@ function doLogin(name, email) {
 }
 
 function doLogout() {
+  if (sb) sb.auth.signOut();
   state.loggedIn = false;
   state.userName = "";
   state.userEmail = "";
@@ -708,8 +721,9 @@ function renderMembers() {
 
 function submitNewsletter(e) {
   e.preventDefault();
-  e.target.reset();
-  toast("Inscrição confirmada. Em breve você receberá novidades da Átma Vidyá Books.");
+  const form = e.target;
+  const email = (form.querySelector("input")?.value || "").trim();
+  subscribeNewsletter(email, form);
 }
 
 /* ================= MENU ================= */
@@ -767,8 +781,7 @@ function submitContact(e) {
     return;
   }
   if (hint) hint.hidden = true;
-  form.hidden = true;
-  ok.hidden = false;
+  sendContact({ nome, whatsapp: whats, email, motivo }, form, ok);
 }
 
 /* ================= ÔJAS BOT ================= */
@@ -914,11 +927,130 @@ document.addEventListener("keydown", (e) => {
 });
 
 hydrate();
-renderChips();
-renderCatalog();
-renderFeatured();
-route();
+bootSupabase();
 setTimeout(() => {
   const dot = document.getElementById("chatDot");
   if (dot) dot.style.display = "block";
 }, 2500);
+
+/* ================= SUPABASE ================= */
+const sb = (window.supabase && window.SUPABASE_URL)
+  ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY)
+  : null;
+
+function mapCategoria(list) {
+  const cats = list || [];
+  if (cats.includes("yoga") || cats.includes("Yôga")) return "Yôga";
+  if (cats.includes("samkhya") || cats.includes("sámkhya") || cats.includes("Sámkhya")) return "Sámkhya";
+  return "Filosofia Hindu";
+}
+function mapLivro(row) {
+  const cents = row.preco_centavos;
+  const text = String(row.sinopse || "").trim();
+  const parts = text ? text.split(/\n+/).filter(Boolean) : ["Sinopse em breve."];
+  return {
+    id: row.id,
+    cat: mapCategoria(row.categorias),
+    title: row.titulo,
+    author: row.autor || "",
+    price: cents == null ? 0 : cents / 100,
+    priceLabel: cents == null ? "Sob consulta" : null,
+    featured: !!row.destaque,
+    membersHook: false,
+    synopsis: parts,
+    pages: row.estoque != null ? String(row.estoque) + " em estoque" : "—",
+    format: row.tipo_venda || "—",
+    lang: "Português (Brasil)",
+    isbn: "—",
+    big: "ॐ",
+    cover: row.capa_url || ""
+  };
+}
+function refreshViews() {
+  renderChips();
+  renderCatalog();
+  renderFeatured();
+  if ((location.hash || "").includes("livro")) route();
+}
+async function loadLivros() {
+  if (!sb) return false;
+  const { data, error } = await sb.from("livros").select("*").eq("disponivel", true);
+  if (error || !data || !data.length) return false;
+  BOOKS.length = 0;
+  data
+    .sort((a, b) => String(a.titulo).localeCompare(String(b.titulo), "pt"))
+    .forEach((row) => BOOKS.push(mapLivro(row)));
+  return true;
+}
+function applySession(session) {
+  if (!session || !session.user) {
+    state.loggedIn = false;
+    state.userName = "";
+    state.userEmail = "";
+  } else {
+    const meta = session.user.user_metadata || {};
+    state.loggedIn = true;
+    state.userEmail = session.user.email || "";
+    state.userName = meta.nome || (state.userEmail.split("@")[0] || "Leitor");
+  }
+  persist();
+  applyAuthUI();
+}
+async function signInSupabase(email, senha) {
+  if (!sb) { toast("Supabase não carregou."); return; }
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
+  if (error) { toast(error.message); return; }
+  applySession(data.session);
+  toast("Bem-vindo(a), " + state.userName + ".");
+  navigate("home");
+  resetChatForAuthState();
+}
+async function signUpSupabase(nome, email, senha) {
+  if (!sb) { toast("Supabase não carregou."); return; }
+  const { data, error } = await sb.auth.signUp({
+    email,
+    password: senha,
+    options: { data: { nome } }
+  });
+  if (error) { toast(error.message); return; }
+  if (data.session) {
+    applySession(data.session);
+    toast("Conta criada. Bem-vindo(a), " + nome.split(" ")[0] + ".");
+    navigate("home");
+  } else {
+    toast("Conta criada. Confirme o e-mail para entrar.");
+    navigate("entrar");
+  }
+}
+async function subscribeNewsletter(email, form) {
+  if (!email) return;
+  if (sb) {
+    const { error } = await sb.from("newsletter_inscricoes").insert({ email });
+    if (error && !/duplicate|unique/i.test(error.message)) {
+      toast("Não foi possível inscrever agora.");
+      return;
+    }
+  }
+  form.reset();
+  toast("Inscrição confirmada. Em breve você receberá novidades da Átma Vidyá Books.");
+}
+async function sendContact(payload, form, ok) {
+  form.hidden = true;
+  ok.hidden = false;
+  if (!sb) return;
+  const { error } = await sb.from("contatos").insert(payload);
+  if (error) ok.textContent = "Sua mensagem foi registrada neste navegador. A tabela de contatos ainda não está no Supabase.";
+}
+async function bootSupabase() {
+  const ok = await loadLivros();
+  if (sb) {
+    const { data } = await sb.auth.getSession();
+    if (data && data.session) applySession(data.session);
+    sb.auth.onAuthStateChange((_event, session) => applySession(session));
+  }
+  renderChips();
+  renderCatalog();
+  renderFeatured();
+  route();
+  if (!ok) toast("Catálogo local em uso — a tabela livros não respondeu.");
+}
