@@ -390,10 +390,10 @@ function onSearchCommit() {
 }
 
 function coverInner(b, label) {
-  if (b.cover) {
-    return `<img class="cover-photo" src="${escapeHtml(b.cover)}" alt="${escapeHtml(b.title)}">`;
+  if (!b.cover) {
+    return `<div class="glyph"><span class="big">${b.big || "ॐ"}</span>${escapeHtml(label)}</div>`;
   }
-  return `<div class="glyph"><span class="big">${b.big || "ॐ"}</span>${escapeHtml(label)}</div>`;
+  return `<img class="cover-photo" src="${encodeURI(b.cover)}" alt="${escapeHtml(b.title)}" onerror="this.style.display='none'">`;
 }
 function bookCardHTML(b) {
   return `
@@ -958,9 +958,9 @@ function mapLivro(row) {
     featured: !!row.destaque,
     membersHook: false,
     synopsis: parts,
-    pages: row.estoque != null ? String(row.estoque) + " em estoque" : "—",
-    format: row.tipo_venda || "—",
-    lang: "Português (Brasil)",
+    pages: "—",
+    format: "—",
+    lang: "—",
     isbn: "—",
     big: "ॐ",
     cover: row.capa_url || ""
