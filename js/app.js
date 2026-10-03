@@ -349,14 +349,14 @@ window.addEventListener("hashchange", route);
 
 /* ================= CATALOG ================= */
 function filteredBooks() {
-  let items =
-    !state.activeFilter
-      ? BOOKS.slice()
-      : BOOKS.filter((b) =>
-          state.activeFilter === "Filosofia Hindu"
-            ? b.cat === "Filosofia Hindu" || b.cat === "Vêdánta" || b.cat === "Desenvolvimento Integral"
-            : b.cat === state.activeFilter
-        );
+  let items = BOOKS.filter((b) => !b.external);
+  if (state.activeFilter) {
+    items = items.filter((b) =>
+      state.activeFilter === "Filosofia Hindu"
+        ? b.cat === "Filosofia Hindu" || b.cat === "Vêdánta" || b.cat === "Desenvolvimento Integral"
+        : b.cat === state.activeFilter
+    );
+  }
   const q = (state.searchQuery || "").trim().toLowerCase();
   if (q) {
     items = items.filter((b) =>
@@ -399,7 +399,7 @@ function bookCardHTML(b) {
   return `
     <article class="book-card" role="link" tabindex="0" onclick="openBook(${jsId(b.id)})" onkeydown="if(event.key==='Enter')openBook(${jsId(b.id)})">
       <div class="book-cover ${coverClass(b.cat)}">
-        ${coverInner(b, b.cat)}
+        <div class="cover-frame">${coverInner(b, b.cat)}</div>
       </div>
       <div class="book-info">
         <div class="title">${escapeHtml(b.title)}</div>
@@ -445,10 +445,33 @@ function renderCatalog() {
 function renderFeatured() {
   const grid = document.getElementById("featuredGrid");
   if (!grid) return;
-  grid.innerHTML = BOOKS.filter((b) => b.featured)
+  grid.innerHTML = BOOKS.filter((b) => b.featured && !b.external)
     .slice(0, 4)
     .map(bookCardHTML)
     .join("");
+  renderLinks();
+}
+function renderLinks() {
+  const grid = document.getElementById("linksGrid");
+  if (!grid) return;
+  const items = BOOKS.filter((b) => b.external && b.link);
+  grid.innerHTML = items.map(linkCardHTML).join("");
+  const band = grid.closest(".links-band");
+  if (band) band.hidden = !items.length;
+}
+function linkCardHTML(b) {
+  const href = escapeHtml(b.link);
+  return `
+    <a class="link-card" href="${href}" target="_blank" rel="noopener noreferrer">
+      <div class="book-cover">
+        <div class="cover-frame">${coverInner(b, b.title)}</div>
+      </div>
+      <div class="link-info">
+        <div class="title">${escapeHtml(b.title)}</div>
+        <div class="author">${escapeHtml(b.author)}</div>
+        <span class="open">Abrir</span>
+      </div>
+    </a>`;
 }
 
 function renderBookDetail(id) {
@@ -466,7 +489,7 @@ function renderBookDetail(id) {
 
   mount.innerHTML = `
     <div class="detail-cover ${coverClass(b.cat)}">
-      ${coverInner(b, b.title.split(" — ")[0])}
+      <div class="cover-frame">${coverInner(b, b.title.split(" — ")[0])}</div>
     </div>
     <div class="detail-info">
       <span class="category-tag">${escapeHtml(b.cat)}</span>
@@ -955,6 +978,8 @@ function mapLivro(row) {
     price: cents == null ? 0 : cents / 100,
     priceLabel: cents == null ? "Sob consulta" : null,
     featured: !!row.destaque,
+    external: row.tipo_venda === "externo",
+    link: row.link_externo || "",
     membersHook: false,
     synopsis: parts,
     pages: "—",
