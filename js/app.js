@@ -927,7 +927,6 @@ document.addEventListener("keydown", (e) => {
 });
 
 hydrate();
-bootSupabase();
 setTimeout(() => {
   const dot = document.getElementById("chatDot");
   if (dot) dot.style.display = "block";
@@ -1054,3 +1053,5 @@ async function bootSupabase() {
   route();
   if (!ok) toast("Catálogo local em uso — a tabela livros não respondeu.");
 }
+
+bootSupabase();
