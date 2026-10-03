@@ -974,11 +974,16 @@ const sb = (window.supabase && window.SUPABASE_URL)
   ? window.supabase.createClient(window.SUPABASE_URL, window.SUPABASE_KEY)
   : null;
 
-function mapCategoria(list) {
-  const cats = list || [];
-  if (cats.includes("yoga") || cats.includes("Yôga")) return "Yôga";
-  if (cats.includes("samkhya") || cats.includes("sámkhya") || cats.includes("Sámkhya")) return "Sámkhya";
-  return "Filosofia Hindu";
+function displayCategoria(row) {
+  const tags = (row.categorias || []).map((t) => String(t).toLowerCase());
+  const stored = row.categoria || "";
+  if (stored === "Psicologia" || stored === "DeRose" || stored === "Yôga" || stored === "Sámkhya") return stored;
+  if (tags.includes("desenvolvimento") || tags.includes("psicologia")) return "Psicologia";
+  if (tags.includes("yoga") || tags.includes("yôga")) return "Yôga";
+  if (tags.includes("samkhya") || tags.includes("sámkhya")) return "Sámkhya";
+  if (tags.includes("derose")) return "DeRose";
+  if (tags.includes("hindu") || stored === "Filosofia Hindu") return "Filosofia Hindu";
+  return stored;
 }
 function mapLivro(row) {
   const cents = row.preco_centavos;
@@ -986,7 +991,7 @@ function mapLivro(row) {
   const parts = text ? text.split(/\n+/).filter(Boolean) : ["Sinopse em breve."];
   return {
     id: row.id,
-    cat: row.categoria || mapCategoria(row.categorias),
+    cat: displayCategoria(row),
     title: row.titulo,
     author: row.autor || "",
     price: cents == null ? 0 : cents / 100,
