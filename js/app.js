@@ -359,14 +359,18 @@ function bookTags(b) {
 }
 function matchesFilter(b, filter) {
   if (!filter || filter === "Todos") return true;
-  if (b.cat === filter) return true;
   const tags = bookTags(b);
-  if (filter === "DeRose") return tags.includes("derose");
-  if (filter === "Psicologia") return tags.includes("desenvolvimento") || tags.includes("psicologia");
-  if (filter === "Yôga") return tags.includes("yoga");
-  if (filter === "Sámkhya") return tags.includes("samkhya");
-  if (filter === "Filosofia Hindu") return tags.includes("hindu");
-  return false;
+  const derose = b.cat === "DeRose" || tags.includes("derose");
+  const psico = b.cat === "Psicologia" || tags.includes("desenvolvimento") || tags.includes("psicologia");
+  if (filter === "DeRose") return derose;
+  if (filter === "Psicologia") return psico;
+  if (filter === "Yôga") return b.cat === "Yôga" || tags.includes("yoga");
+  if (filter === "Sámkhya") return b.cat === "Sámkhya" || tags.includes("samkhya");
+  if (filter === "Filosofia Hindu") {
+    if (derose || psico) return false;
+    return b.cat === "Filosofia Hindu" || tags.includes("hindu");
+  }
+  return b.cat === filter;
 }
 function filteredBooks() {
   let items = BOOKS.filter((b) => !b.external);
