@@ -881,20 +881,47 @@ const FAQ = {
     "Claro. Se o pedido já foi realizado, me diga o número ou o e-mail usado na compra e, assim que a integração com o sistema de pedidos estiver ativa, poderei consultar o status por aqui."
 };
 
+function ojasSessionId() {
+  let id = sessionStorage.getItem("atma.ojasSession");
+  if (!id) {
+    id = (crypto.randomUUID && crypto.randomUUID()) || String(Date.now());
+    sessionStorage.setItem("atma.ojasSession", id);
+  }
+  return id;
+}
+async function askOjas(text) {
+  appendMsg("bot", "Consultando o catálogo...");
+  const pending = document.querySelector("#ojasBody .msg.bot:last-child");
+  if (!window.OJAS_WEBHOOK) {
+    if (pending) pending.textContent = "O atendimento não está ligado.";
+    return;
+  }
+  try {
+    const res = await fetch(window.OJAS_WEBHOOK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "ngrok-skip-browser-warning": "1"
+      },
+      body: JSON.stringify({
+        action: "sendMessage",
+        sessionId: ojasSessionId(),
+        chatInput: text
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    const reply = data.output || data.text || data.message || "";
+    if (pending) pending.textContent = reply || "Não consegui consultar o catálogo agora.";
+  } catch (e) {
+    if (pending) pending.textContent = "Não consegui falar com o atendimento. Publique o fluxo e deixe o ngrok aberto.";
+  }
+}
 function handleQuickReply(text) {
   appendMsg("user", text);
   const key = text.toLowerCase();
-
   if (key === "ver meu carrinho") {
     toggleChat(false);
     toggleCart(true);
-    return;
-  }
-  if (key === "o que é sámkhya?") {
-    setTimeout(() => {
-      appendMsg("bot", FAQ["o que é sámkhya?"]);
-      setChips(["Ir para a página do Sámkhya", "Formas de pagamento", "Prazo de entrega"]);
-    }, 300);
     return;
   }
   if (key === "ir para a página do sámkhya") {
@@ -902,30 +929,8 @@ function handleQuickReply(text) {
     navigate("sankhya");
     return;
   }
-  if (FAQ[key]) {
-    setTimeout(() => {
-      appendMsg("bot", FAQ[key]);
-      setChips(
-        state.loggedIn
-          ? ["Ver meu carrinho", "Formas de pagamento"]
-          : ["O que é Sámkhya?", "Formas de pagamento", "Prazo de entrega"]
-      );
-    }, 300);
-    return;
-  }
-  setTimeout(() => {
-    appendMsg(
-      "bot",
-      "Ainda estou aprendendo a responder isso automaticamente — em breve, com a integração via n8n, poderei ajudar de forma mais completa. Por ora, use as sugestões abaixo."
-    );
-    setChips(
-      state.loggedIn
-        ? ["Ver meu carrinho", "Formas de pagamento"]
-        : ["O que é Sámkhya?", "Formas de pagamento", "Prazo de entrega"]
-    );
-  }, 300);
+  askOjas(text);
 }
-
 function sendFreeText(e) {
   e.preventDefault();
   const input = document.getElementById("ojasInput");
@@ -933,22 +938,7 @@ function sendFreeText(e) {
   if (!val) return false;
   appendMsg("user", val);
   input.value = "";
-  const key = val.toLowerCase();
-  if (FAQ[key]) {
-    setTimeout(() => appendMsg("bot", FAQ[key]), 300);
-  } else {
-    setTimeout(() => {
-      appendMsg(
-        "bot",
-        "Obrigado pela mensagem. Esta é uma versão de demonstração do Ôjas Bot — em breve, com a integração via n8n, poderei responder perguntas livres com mais precisão. Por enquanto, use os botões de sugestão."
-      );
-      setChips(
-        state.loggedIn
-          ? ["Ver meu carrinho", "Formas de pagamento"]
-          : ["O que é Sámkhya?", "Formas de pagamento", "Prazo de entrega"]
-      );
-    }, 300);
-  }
+  askOjas(val);
   return false;
 }
 
