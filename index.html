@@ -234,11 +234,11 @@
       <p class="sub">Acesse sua conta Átma Vidyá Books</p>
       <form onsubmit="submitLogin(event)">
         <div class="field"><label for="loginEmail">E-mail</label><input id="loginEmail" type="email" required autocomplete="username"></div>
-        <div class="field"><label for="loginSenha">Senha</label><input id="loginSenha" type="password" required minlength="4" autocomplete="current-password"></div>
+        <div class="field"><label for="loginSenha">Senha</label><input id="loginSenha" type="password" required minlength="6" autocomplete="current-password"></div>
         <button class="btn btn-primary" type="submit">Entrar</button>
       </form>
       <p class="auth-switch">Ainda não tem conta? <a href="#criar-conta" onclick="navigate('criar-conta')">Criar conta</a></p>
-      <p class="auth-note">Ambiente de demonstração — a autenticação real será conectada ao banco de dados em breve. Qualquer e-mail e senha válidos simulam um acesso, guardado neste navegador.</p>
+      <p class="auth-note">A conta é criada no Supabase. A senha tem no mínimo 6 caracteres. Se o projeto exigir confirmação, o acesso só libera depois do e-mail.</p>
     </div>
   </div>
 </section>
@@ -252,12 +252,12 @@
       <form onsubmit="submitSignup(event)">
         <div class="field"><label for="suNome">Nome</label><input id="suNome" type="text" required autocomplete="name"></div>
         <div class="field"><label for="suEmail">E-mail</label><input id="suEmail" type="email" required autocomplete="email"></div>
-        <div class="field"><label for="suSenha">Senha</label><input id="suSenha" type="password" required minlength="4" autocomplete="new-password"></div>
-        <div class="field"><label for="suSenha2">Confirmar senha</label><input id="suSenha2" type="password" required minlength="4" autocomplete="new-password"></div>
+        <div class="field"><label for="suSenha">Senha</label><input id="suSenha" type="password" required minlength="6" autocomplete="new-password"></div>
+        <div class="field"><label for="suSenha2">Confirmar senha</label><input id="suSenha2" type="password" required minlength="6" autocomplete="new-password"></div>
         <button class="btn btn-primary" type="submit">Criar conta</button>
       </form>
       <p class="auth-switch">Já tem conta? <a href="#entrar" onclick="navigate('entrar')">Entrar</a></p>
-      <p class="auth-note">Ambiente de demonstração — os dados ficam apenas no armazenamento local deste navegador.</p>
+      <p class="auth-note">O cadastro grava a conta no Supabase. O nome fica no perfil. A senha não fica no site.</p>
     </div>
   </div>
 </section>
