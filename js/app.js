@@ -235,12 +235,6 @@ function hydrate() {
   try {
     const cart = JSON.parse(localStorage.getItem(STORAGE_CART) || "{}");
     if (cart && typeof cart === "object") state.cart = cart;
-    const auth = JSON.parse(localStorage.getItem(STORAGE_AUTH) || "null");
-    if (auth && auth.loggedIn) {
-      state.loggedIn = true;
-      state.userName = auth.userName || "";
-      state.userEmail = auth.userEmail || "";
-    }
   } catch (e) {
     /* ignore */
   }
@@ -362,13 +356,18 @@ function matchesFilter(b, filter) {
   const tags = bookTags(b);
   const derose = b.cat === "DeRose" || tags.includes("derose");
   const psico = b.cat === "Psicologia" || tags.includes("desenvolvimento") || tags.includes("psicologia");
+  const hindu =
+    b.cat === "Filosofia Hindu" ||
+    b.cat === "Yôga" ||
+    b.cat === "Sámkhya" ||
+    tags.some((t) => ["hindu", "vedanta", "upanishad", "upanishada", "yoga", "samkhya"].includes(t));
   if (filter === "DeRose") return derose;
   if (filter === "Psicologia") return psico;
   if (filter === "Yôga") return b.cat === "Yôga" || tags.includes("yoga");
   if (filter === "Sámkhya") return b.cat === "Sámkhya" || tags.includes("samkhya");
   if (filter === "Filosofia Hindu") {
-    if (derose || psico) return false;
-    return b.cat === "Filosofia Hindu" || tags.includes("hindu");
+    if ((derose || psico) && !tags.some((t) => ["hindu", "vedanta", "upanishad", "upanishada", "yoga", "samkhya"].includes(t)) && b.cat !== "Yôga" && b.cat !== "Sámkhya") return false;
+    return hindu;
   }
   return b.cat === filter;
 }
@@ -1040,10 +1039,18 @@ function applySession(session) {
   persist();
   applyAuthUI();
 }
+function authMessage(error) {
+  const msg = (error && error.message) || "";
+  if (/invalid login/i.test(msg)) return "E-mail ou senha incorretos.";
+  if (/email not confirmed/i.test(msg)) return "Confirme o e-mail antes de entrar.";
+  if (/already registered|already exists/i.test(msg)) return "Este e-mail já tem conta. Entre.";
+  if (/password/i.test(msg) && /6|least/i.test(msg)) return "A senha precisa ter no mínimo 6 caracteres.";
+  return msg || "Não foi possível entrar.";
+}
 async function signInSupabase(email, senha) {
   if (!sb) { toast("Supabase não carregou."); return; }
   const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
-  if (error) { toast(error.message); return; }
+  if (error) { toast(authMessage(error)); return; }
   applySession(data.session);
   toast("Bem-vindo(a), " + state.userName + ".");
   navigate("home");
@@ -1054,9 +1061,12 @@ async function signUpSupabase(nome, email, senha) {
   const { data, error } = await sb.auth.signUp({
     email,
     password: senha,
-    options: { data: { nome } }
+    options: {
+      data: { nome },
+      emailRedirectTo: location.origin + location.pathname
+    }
   });
-  if (error) { toast(error.message); return; }
+  if (error) { toast(authMessage(error)); return; }
   if (data.session) {
     applySession(data.session);
     toast("Conta criada. Bem-vindo(a), " + nome.split(" ")[0] + ".");
@@ -1089,7 +1099,7 @@ async function bootSupabase() {
   const ok = await loadLivros();
   if (sb) {
     const { data } = await sb.auth.getSession();
-    if (data && data.session) applySession(data.session);
+    applySession(data && data.session);
     sb.auth.onAuthStateChange((_event, session) => applySession(session));
   }
   renderChips();
